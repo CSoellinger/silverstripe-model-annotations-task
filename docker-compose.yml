@@ -1,0 +1,21 @@
+version: "3.9"
+# Docker services
+services:
+  ############################
+  # SilverStripe web service #
+  ############################
+  web:
+    build:
+      context: ./
+      args:
+        LOCAL_USER: ${USER:?USER env variable not set}
+        LOCAL_USER_ID: ${UID:?UID env variable not set}
+    volumes:
+      - ./:/var/www/html
+    ports:
+      - ${DOCKER_WEB_PORT:-8080}:80
+      - ${DOCKER_SSL_PORT:-8443}:443
+    environment:
+      - APACHE_RUN_USER=${USER:?USER env variable not set}
+      - APACHE_RUN_GROUP=${USER:?USER env variable not set}
+    user: ${USER:?USER env variable not set}

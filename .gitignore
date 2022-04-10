@@ -1,0 +1,12 @@
+node_modules
+/vendor/
+.DS_Store
+.composer
+composer.phar
+.env
+composer.lock
+/.doctum/cache/
+.phpunit.result.cache
+/build/cache/
+/build/coverage/
+/assets/

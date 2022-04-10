@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<ruleset name="SilverStripe">
+    <description>CodeSniffer ruleset for SilverStripe coding conventions.</description>
+
+    <arg name="extensions" value="php"/>
+    <arg name="colors"/>
+    <arg value="sp"/>
+
+    <file>./src</file>
+    <file>./tests</file>
+
+    <!-- Don't sniff third party libraries -->
+    <exclude-pattern>*/vendor/*</exclude-pattern>
+    <exclude-pattern>*/thirdparty/*</exclude-pattern>
+    <exclude-pattern>*/node_modules/*</exclude-pattern>
+    <exclude-pattern>*\.(inc|css|scss|js)$</exclude-pattern>
+
+    <!-- Use PSR-2 as a base standard -->
+    <rule ref="PSR2">
+        <!-- Allow classes to not declare a namespace -->
+        <exclude name="PSR1.Classes.ClassDeclaration.MissingNamespace"/>
+
+        <!-- Allow underscores in class names -->
+        <exclude name="Squiz.Classes.ValidClassName.NotCamelCaps"/>
+
+        <!-- Allow non camel cased method names -->
+        <exclude name="PSR1.Methods.CamelCapsMethodName.NotCamelCaps"/>
+    </rule>
+</ruleset>

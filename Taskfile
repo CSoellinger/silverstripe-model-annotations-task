@@ -1,0 +1,38 @@
+#!/bin/bash
+
+function composer {
+    docker compose run --rm web composer "$@"
+}
+
+function analyze {
+    docker compose run --rm web composer run analyze
+}
+
+function lint {
+    docker compose run --rm web composer run lint
+}
+
+function lint:fix {
+    docker compose run --rm web composer run lint:fix
+}
+
+function sake {
+    docker compose run --rm web ./vendor/bin/sake "$@"
+}
+
+function test {
+    docker compose run --rm web composer run test
+}
+
+function default {
+    help
+}
+
+function help {
+    echo "$0 <task> <args>"
+    echo "Tasks:"
+    compgen -A function | cat -n
+}
+
+TIMEFORMAT="Task completed in %3lR"
+time ${@:-default}
