@@ -31,7 +31,7 @@
         "issues": "https://github.com/CSoellinger/silverstripe-model-annotation-task/issues"
     },
     "require": {
-        "php": ">=7.4,<8.1",
+        "php": ">=7.3,<8.1",
         "ext-ast": "*",
         "silverstripe/framework": "~4.10"
     },
@@ -60,6 +60,7 @@
         }
     },
     "config": {
+        "platform-check": false,
         "allow-plugins": {
             "composer/installers": true,
             "captainhook/plugin-composer": true,
@@ -68,7 +69,8 @@
             "phpstan/extension-installer": true,
             "ramsey/composer-repl": true,
             "ramsey/devtools": true,
-            "silverstripe/vendor-plugin": true
+            "silverstripe/vendor-plugin": true,
+            "composer/package-versions-deprecated": true
         },
         "sort-packages": true
     },

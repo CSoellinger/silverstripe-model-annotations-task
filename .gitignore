@@ -10,3 +10,4 @@ composer.lock
 /build/cache/
 /build/coverage/
 /assets/
+/resources/
