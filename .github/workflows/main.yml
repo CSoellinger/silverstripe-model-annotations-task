@@ -28,8 +28,8 @@ jobs:
         versions:
           - php: '7.4'
             silverstripe: '4.10.x-dev'
-          - php: '8.0'
-            silverstripe: '4.10.x-dev'
+          # - php: '8.0'
+          #   silverstripe: '4.10.x-dev'
     steps:
       - name: checkout
         uses: actions/checkout@v2

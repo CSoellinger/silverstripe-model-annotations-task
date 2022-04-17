@@ -15,7 +15,7 @@ use SilverStripe\Dev\SapphireTest;
  *
  * @covers \CSoellinger\SilverStripe\ModelAnnotations\Handler\DataClassHandler
  */
-class DataClassFileTest extends SapphireTest
+class DataClassHandlerTest extends SapphireTest
 {
     protected static DataClassHandler $handler;
 
@@ -128,11 +128,8 @@ class DataClassFileTest extends SapphireTest
     /**
      * @covers \CSoellinger\SilverStripe\ModelAnnotations\Handler\DataClassHandler::generateClassPhpDoc
      * @dataProvider provideFqnArray
-     *
-     * @param mixed $fqn
-     * @param mixed $classDoc
      */
-    public function testGenerateClassPhpDoc($fqn, $classDoc): void
+    public function testGenerateClassPhpDoc(string $fqn, string $classDoc): void
     {
         /** @var DataClassHandler $handler */
         $handler = Injector::inst()->createWithArgs(DataClassHandler::class, [$fqn]);
