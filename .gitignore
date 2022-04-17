@@ -7,7 +7,7 @@ composer.phar
 composer.lock
 /.doctum/cache/
 .phpunit.result.cache
-/build/cache/
+# /build/cache/*
 /build/coverage/
 /assets/
 /resources/
