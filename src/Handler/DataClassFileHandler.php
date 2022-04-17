@@ -155,16 +155,16 @@ class DataClassFileHandler
     /**
      * Search for a namespace declaration.
      *
-     * @param mixed $ast - Abstract syntax tree to search in
+     * @param \ast\Node|string $ast - Abstract syntax tree to search in
      */
-    private function searchNamespaceAst(mixed $ast): ?\ast\Node
+    private function searchNamespaceAst($ast): ?\ast\Node
     {
         if ($ast instanceof \ast\Node) {
             if ($ast->kind === \ast\AST_NAMESPACE) {
                 return $ast;
             }
 
-            /** @var mixed $child */
+            /** @var \ast\Node $child */
             foreach ($ast->children as $child) {
                 $childAst = $this->searchNamespaceAst($child);
 
@@ -180,10 +180,10 @@ class DataClassFileHandler
     /**
      * Search for a class abstract syntax tree.
      *
-     * @param mixed  $ast       - Abstract syntax tree to search in
-     * @param string $className - The class to search for
+     * @param \ast\Node|string $ast       - Abstract syntax tree to search in
+     * @param string           $className - The class to search for
      */
-    private function searchClassAst(mixed $ast, string $className): ?\ast\Node
+    private function searchClassAst($ast, string $className): ?\ast\Node
     {
         if ($ast instanceof \ast\Node) {
             if ($ast->kind === \ast\AST_CLASS) {
@@ -195,7 +195,7 @@ class DataClassFileHandler
                 }
             }
 
-            /** @var mixed $child */
+            /** @var \ast\Node $child */
             foreach ($ast->children as $child) {
                 $childAst = $this->searchClassAst($child, $className);
 
@@ -211,19 +211,19 @@ class DataClassFileHandler
     /**
      * Search for all use statements inside an abstract syntax tree.
      *
-     * @param mixed               $ast           - Abstract syntax tree
+     * @param \ast\Node|string     $ast           - Abstract syntax tree
      * @param array<int,\ast\Node> $useStatements - Collected use statements
      *
      * @return \ast\Node[]
      */
-    private function searchUseStatementsInAst(mixed $ast, $useStatements = [])
+    private function searchUseStatementsInAst($ast, $useStatements = [])
     {
         if ($ast instanceof \ast\Node) {
             if ($ast->kind === \ast\AST_USE_ELEM) {
                 $useStatements[] = $ast;
             }
 
-            /** @var mixed $child */
+            /** @var \ast\Node $child */
             foreach ($ast->children as $child) {
                 /** @var array<int,\ast\Node> $useStatements */
                 $useStatements = $this->searchUseStatementsInAst($child, $useStatements);
