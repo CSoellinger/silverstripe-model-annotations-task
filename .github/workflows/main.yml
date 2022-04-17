@@ -68,8 +68,8 @@ jobs:
       - name: Run Migration
         run: ./vendor/bin/sake dev/build "flush=all"
 
-      - name: Run lint
-        run: composer lint:all
+      # - name: Run lint
+      #   run: composer lint:all
 
       - name: Run analyze
         run: composer analyze:all
