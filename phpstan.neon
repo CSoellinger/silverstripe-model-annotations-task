@@ -8,23 +8,32 @@ parameters:
 		- ./vendor
 	ignoreErrors:
 		-
-			message: '#^Static property CSoellinger\\SilverStripe\\ModelAnnotation\\Task\\ModelAnnotationTask\:\:\$siteTreeFields is never read, only written\.$#'
-			path: src/Task/ModelAnnotationTask.php
+			message: '#^Static property CSoellinger\\SilverStripe\\ModelAnnotation\\Task\\ModelAnnotationsTask\:\:\$siteTreeFields is never read, only written\.$#'
+			path: src/Task/ModelAnnotationsTask.php
 		-
-			message: '#^Static property CSoellinger\\SilverStripe\\ModelAnnotation\\Task\\ModelAnnotationTask\:\:\$ignoreFields is never read, only written\.$#'
-			path: src/Task/ModelAnnotationTask.php
+			message: '#^Static property CSoellinger\\SilverStripe\\ModelAnnotation\\Task\\ModelAnnotationsTask\:\:\$ignoreFields is never read, only written\.$#'
+			path: src/Task/ModelAnnotationsTask.php
 		-
-			message: '#^Static property CSoellinger\\SilverStripe\\ModelAnnotation\\Task\\ModelAnnotationTask\:\:\$createBackupFile is never read, only written\.$#'
-			path: src/Task/ModelAnnotationTask.php
+			message: '#^Static property CSoellinger\\SilverStripe\\ModelAnnotation\\Task\\ModelAnnotationsTask\:\:\$createBackupFile is never read, only written\.$#'
+			path: src/Task/ModelAnnotationsTask.php
 		-
-			message: '#^Static property CSoellinger\\SilverStripe\\ModelAnnotation\\Task\\ModelAnnotationTask\:\:\$dryRun is never read, only written\.$#'
-			path: src/Task/ModelAnnotationTask.php
+			message: '#^Static property CSoellinger\\SilverStripe\\ModelAnnotation\\Task\\ModelAnnotationsTask\:\:\$dryRun is never read, only written\.$#'
+			path: src/Task/ModelAnnotationsTask.php
 		-
-			message: '#^Static property CSoellinger\\SilverStripe\\ModelAnnotation\\Task\\ModelAnnotationTask\:\:\$quiet is never read, only written\.$#'
-			path: src/Task/ModelAnnotationTask.php
+			message: '#^Static property CSoellinger\\SilverStripe\\ModelAnnotation\\Task\\ModelAnnotationsTask\:\:\$quiet is never read, only written\.$#'
+			path: src/Task/ModelAnnotationsTask.php
 		-
-			message: '#^Static property CSoellinger\\SilverStripe\\ModelAnnotation\\Task\\ModelAnnotationTask\:\:\$addUseStatements is never read, only written\.$#'
-			path: src/Task/ModelAnnotationTask.php
+			message: '#^Static property CSoellinger\\SilverStripe\\ModelAnnotation\\Task\\ModelAnnotationsTask\:\:\$addUseStatements is never read, only written\.$#'
+			path: src/Task/ModelAnnotationsTask.php
+		-
+			message: '#^Static property CSoellinger\\SilverStripe\\ModelAnnotation\\Task\\ModelAnnotationsTask\:\:\$dependencies is never read, only written\.$#'
+			path: src/Task/ModelAnnotationsTask.php
+		-
+			message: '#^Static property CSoellinger\\SilverStripe\\ModelAnnotation\\Task\\ModelAnnotationsTask\:\:\$segment is never read, only written\.$#'
+			path: src/Task/ModelAnnotationsTask.php
+		-
+			message: '#^Static property CSoellinger\\SilverStripe\\ModelAnnotation\\Handler\\DataClassHandler\:\:\$dependencies is never read, only written\.$#'
+			path: src/Handler/DataClassHandler.php
 		-
 			message: '#^Static property CSoellinger\\SilverStripe\\ModelAnnotation\\Test\\Unit\\Player\:\:\$db is never read, only written\.$#'
 			path: tests/unit/Player.php

@@ -1,5 +1,5 @@
 {
-    "name": "csoellinger/silverstripe-model-annotation-task",
+    "name": "csoellinger/silverstripe-model-annotations-task",
     "description": "A SilverStripe Task to generate data object model annotations for defined db fields. Also for configs from data extensions.",
     "license": "BSD-3-Clause",
     "type": "silverstripe-vendormodule",
@@ -26,9 +26,9 @@
             "role": "developer"
         }
     ],
-    "homepage": "https://github.com/CSoellinger/silverstripe-model-annotation-task",
+    "homepage": "https://github.com/CSoellinger/silverstripe-model-annotations-task",
     "support": {
-        "issues": "https://github.com/CSoellinger/silverstripe-model-annotation-task/issues"
+        "issues": "https://github.com/CSoellinger/silverstripe-model-annotations-task/issues"
     },
     "require": {
         "php": ">=7.3,<8.1",

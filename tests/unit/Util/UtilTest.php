@@ -4,6 +4,7 @@ namespace CSoellinger\SilverStripe\ModelAnnotation\Test\Unit\Util;
 
 use CSoellinger\SilverStripe\ModelAnnotation\Util\Util;
 use Reflection;
+use SilverStripe\Core\Injector\Injector;
 use SilverStripe\Dev\SapphireTest;
 use SilverStripe\ORM\DataObject;
 
@@ -14,23 +15,35 @@ use SilverStripe\ORM\DataObject;
  */
 class UtilTest extends SapphireTest
 {
+    protected static Util $util;
+
+    public static function setUpBeforeClass(): void
+    {
+        parent::setUpBeforeClass();
+
+        /** @var Util $util */
+        $util = Injector::inst()->get(Util::class);
+
+        self::$util = $util;
+    }
+
     /**
      * @covers \CSoellinger\SilverStripe\ModelAnnotation\Util\Util::strStartsWith
      */
     public function testStrStartsWith(): void
     {
-        self::assertTrue(Util::strStartsWith('Hallo', 'Ha'));
-        self::assertFalse(Util::strStartsWith('Hallo', 'Ol'));
+        self::assertTrue(self::$util->strStartsWith('Hallo', 'Ha'));
+        self::assertFalse(self::$util->strStartsWith('Hallo', 'Ol'));
     }
 
     /**
-     * @covers \CSoellinger\SilverStripe\ModelAnnotation\Util\Util::silverStripeToPhpTyping
+     * @covers \CSoellinger\SilverStripe\ModelAnnotation\Util\Util::silverStripeToPhpType
      */
-    public function testSilverStripeToPhpTyping(): void
+    public function testSilverStripeToPhpType(): void
     {
-        self::assertEquals('string', Util::silverStripeToPhpTyping('Varchar'));
-        self::assertEquals('float', Util::silverStripeToPhpTyping('Decimal'));
-        self::assertEquals('bool', Util::silverStripeToPhpTyping('Boolean'));
+        self::assertEquals('string', self::$util->silverStripeToPhpType('Varchar'));
+        self::assertEquals('float', self::$util->silverStripeToPhpType('Decimal'));
+        self::assertEquals('bool', self::$util->silverStripeToPhpType('Boolean'));
     }
 
     /**
@@ -38,7 +51,7 @@ class UtilTest extends SapphireTest
      */
     public function testFileByFqn(): void
     {
-        $classPath = str_replace(BASE_PATH, '', Util::fileByFqn(DataObject::class));
+        $classPath = str_replace(BASE_PATH, '', self::$util->fileByFqn(DataObject::class));
 
         self::assertEquals('/vendor/silverstripe/framework/src/ORM/DataObject.php', $classPath);
     }
@@ -48,7 +61,7 @@ class UtilTest extends SapphireTest
      */
     public function testFileByFqnFunction(): void
     {
-        $functionPath = str_replace(BASE_PATH, '', Util::fileByFqn('_t'));
+        $functionPath = str_replace(BASE_PATH, '', self::$util->fileByFqn('_t'));
 
         self::assertEquals('/vendor/silverstripe/framework/src/includes/functions.php', $functionPath);
     }
@@ -58,7 +71,7 @@ class UtilTest extends SapphireTest
      */
     public function testFileByFqnUnknown(): void
     {
-        self::assertEquals('', Util::fileByFqn('xyz'));
+        self::assertEquals('', self::$util->fileByFqn('xyz'));
     }
 
     /**
@@ -66,9 +79,21 @@ class UtilTest extends SapphireTest
      */
     public function testGetNamespaceFromFqn(): void
     {
-        $namespace = Util::getNamespaceFromFqn(self::class);
+        $namespace = self::$util->getNamespaceFromFqn(self::class);
 
         self::assertEquals('CSoellinger\SilverStripe\ModelAnnotation\Test\Unit\Util', $namespace);
-        self::assertEquals('\\', Util::getNamespaceFromFqn(Reflection::class));
+        self::assertEquals('\\', self::$util->getNamespaceFromFqn(Reflection::class));
+    }
+
+    /**
+     * @covers \CSoellinger\SilverStripe\ModelAnnotation\Util\Util::getClassesFromNamespace
+     */
+    public function testGetClassesFromNamespace(): void
+    {
+        $namespace = self::$util->getNamespaceFromFqn(self::class);
+        $classes = self::$util->getClassesFromNamespace($namespace);
+
+        self::assertCount(1, $classes);
+        self::assertEquals($classes[0], self::class);
     }
 }

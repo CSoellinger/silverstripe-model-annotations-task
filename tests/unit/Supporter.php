@@ -2,6 +2,7 @@
 
 namespace CSoellinger\SilverStripe\ModelAnnotation\Test\Unit;
 
+use SilverStripe\Dev\TestOnly;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\ORM\ManyManyList;
 
@@ -10,7 +11,7 @@ use SilverStripe\ORM\ManyManyList;
  *
  * @method ManyManyList Supports() ...
  */
-class Supporter extends DataObject
+class Supporter extends DataObject implements TestOnly
 {
     /**
      * @var array<string,string> undocumented variable

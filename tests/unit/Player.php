@@ -23,6 +23,6 @@ class Player extends DataObject implements TestOnly
      * @var array<string,string> undocumented variable
      */
     private static $has_one = [
-        'Team' => Team::class,
+        'Team' => Team::class . '.ID',
     ];
 }

@@ -11,3 +11,4 @@ composer.lock
 /build/coverage/
 /assets/
 /resources/
+/public/assets/

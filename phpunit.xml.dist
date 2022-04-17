@@ -6,10 +6,14 @@
             <directory>./tests/</directory>
         </testsuite>
     </testsuites>
-    <!-- Code coverage -->
     <coverage processUncoveredFiles="true">
+        <!-- Code coverage -->
         <include>
             <directory suffix=".php">./src</directory>
         </include>
+        <exclude>
+            <directory suffix=".php">./tests</directory>
+            <directory suffix=".php">./vendor</directory>
+        </exclude>
     </coverage>
 </phpunit>

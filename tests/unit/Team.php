@@ -14,6 +14,7 @@ class Team extends DataObject implements TestOnly
     private static $db = [
         'Name' => 'Varchar(255)',
         'Origin' => 'Varchar(255)',
+        'LinkTracking' => 'Boolean',
     ];
 
     /**
@@ -21,6 +22,7 @@ class Team extends DataObject implements TestOnly
      */
     private static $has_many = [
         'Players' => Player::class,
+        'FileTracking' => Image::class,
     ];
 
     /**

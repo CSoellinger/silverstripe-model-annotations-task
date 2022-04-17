@@ -4,16 +4,22 @@ namespace CSoellinger\SilverStripe\ModelAnnotation\Util;
 
 use ReflectionClass;
 use ReflectionFunction;
+use SilverStripe\Control\HTTPRequest;
+use SilverStripe\Core\ClassInfo;
+use SilverStripe\Core\Config\Configurable;
+use SilverStripe\Core\Injector\Injectable;
 
 /**
  * Helper class.
  */
 class Util
 {
+    use Injectable;
+
     /**
      * Little helper for php7 support.
      */
-    public static function strStartsWith(string $haystack, string $needle): bool
+    public function strStartsWith(string $haystack, string $needle): bool
     {
         return substr($haystack, 0, strlen($needle)) === $needle;
     }
@@ -21,7 +27,7 @@ class Util
     /**
      * Transform silver stripe db type to a php type.
      */
-    public static function silverStripeToPhpTyping(string $dataType): string
+    public function silverStripeToPhpType(string $dataType): string
     {
         $dataType = strtolower($dataType);
         $dataType = preg_replace(
@@ -39,7 +45,7 @@ class Util
      *
      * @param string $fqn Full qualified class name
      */
-    public static function fileByFqn(string $fqn): string
+    public function fileByFqn(string $fqn): string
     {
         if (function_exists($fqn)) {
             $reflector = new ReflectionFunction($fqn);
@@ -56,15 +62,32 @@ class Util
      * Get namespace from class full qualified name.
      *
      * @param string $fqn Full qualified name
-     *
-     * @return string
      */
-    public static function getNamespaceFromFqn(string $fqn): string
+    public function getNamespaceFromFqn(string $fqn): string
     {
         if ($pos = strrpos($fqn, '\\')) {
             return substr($fqn, 0, $pos);
         }
 
         return '\\';
+    }
+
+    /**
+     * Get all classes from a namespace.
+     *
+     * @param string $namespace The namespace in which to search
+     *
+     * @return string[]
+     */
+    public function getClassesFromNamespace(string $namespace)
+    {
+        $namespace .= '\\';
+
+        $classes = array_filter(ClassInfo::allClasses(), function (string $item) use ($namespace) {
+            return substr($item, 0, strlen($namespace)) === $namespace;
+        });
+
+        /** @var string[] */
+        return array_values($classes);
     }
 }

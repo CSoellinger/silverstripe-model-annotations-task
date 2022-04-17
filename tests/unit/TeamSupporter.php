@@ -2,16 +2,15 @@
 
 namespace CSoellinger\SilverStripe\ModelAnnotation\Test\Unit;
 
+use SilverStripe\Dev\TestOnly;
 use SilverStripe\ORM\DataObject;
 
 /**
  * @property int       $Ranking     Ranking ...
- * @property Team      $Team        Has one Team
  * @property int       $TeamID      Team ID
  * @property Supporter $Supporter   Has one Supporter
- * @property int       $SupporterID Supporter ID
  */
-class TeamSupporter extends DataObject
+class TeamSupporter extends DataObject implements TestOnly
 {
     /**
      * @var array<string,string> undocumented variable

@@ -2,35 +2,48 @@
 
 namespace CSoellinger\SilverStripe\ModelAnnotation\Test\Unit\Task;
 
-use CSoellinger\SilverStripe\ModelAnnotation\Task\ModelAnnotationTask;
-use Exception;
+// phpcs:disable
+require_once __DIR__ . '/../../mockup.php';
+// phpcs:enable
+
+use CSoellinger\SilverStripe\ModelAnnotation\Task\ModelAnnotationsTask;
+use CSoellinger\SilverStripe\ModelAnnotation\Test\PhpUnitHelper;
+use CSoellinger\SilverStripe\ModelAnnotation\Util\Util;
+use Error;
+use Monolog\Logger;
+use Psr\Log\LoggerInterface;
 use SilverStripe\Control\HTTPRequest;
 use SilverStripe\Core\Injector\Injector;
+use SilverStripe\Core\Kernel;
 use SilverStripe\Dev\SapphireTest;
 
 /**
  * @internal
  *
- * @covers \CSoellinger\SilverStripe\ModelAnnotation\Task\ModelAnnotationTask
+ * @covers \CSoellinger\SilverStripe\ModelAnnotation\Task\ModelAnnotationsTask
  */
-class ModelAnnotationTaskTest extends SapphireTest
+class ModelAnnotationsTaskTest extends SapphireTest
 {
-    protected static ModelAnnotationTask $task;
+    protected static ModelAnnotationsTask $task;
 
     public static function setUpBeforeClass(): void
     {
         parent::setUpBeforeClass();
 
-        /** @var ModelAnnotationTask $task */
-        $task = Injector::inst()->get(ModelAnnotationTask::class);
-
-        self::$task = $task;
+        Injector::nest();
+        Injector::inst()->registerService(new HTTPRequest('GET', '/'), HTTPRequest::class);
     }
 
     public function setUp(): void
     {
         parent::setUp();
 
+        PhpUnitHelper::$phpSapiName = 'cli';
+
+        /** @var ModelAnnotationsTask $task */
+        $task = Injector::inst()->create(ModelAnnotationsTask::class);
+
+        self::$task = $task;
         self::$task->config()->set('createBackupFile', false);
         self::$task->config()->set('dryRun', false);
         self::$task->config()->set('quiet', false);
@@ -41,367 +54,486 @@ class ModelAnnotationTaskTest extends SapphireTest
         ]);
     }
 
+    public static function setUpAfterClass(): void
+    {
+        Injector::unnest();
+    }
+
     /**
-     * @covers \CSoellinger\SilverStripe\ModelAnnotation\Task\ModelAnnotationTask::__construct
+     * @covers \CSoellinger\SilverStripe\ModelAnnotation\Task\ModelAnnotationsTask::__construct
      */
     public function testInitialized(): void
     {
-        self::assertInstanceOf(ModelAnnotationTask::class, self::$task);
+        $modelAnnotationTask = new ModelAnnotationsTask();
+        self::assertInstanceOf(ModelAnnotationsTask::class, $modelAnnotationTask);
     }
 
     /**
-     * @covers \CSoellinger\SilverStripe\ModelAnnotation\Task\ModelAnnotationTask::getTitle
+     * @covers \CSoellinger\SilverStripe\ModelAnnotation\Task\ModelAnnotationsTask::__construct
+     */
+    public function testInitializedBrowser(): void
+    {
+        PhpUnitHelper::$phpSapiName = 'apache';
+
+        $modelAnnotationTask = new ModelAnnotationsTask();
+        self::assertInstanceOf(ModelAnnotationsTask::class, $modelAnnotationTask);
+    }
+
+    /**
+     * @covers \CSoellinger\SilverStripe\ModelAnnotation\Task\ModelAnnotationsTask::getTitle
      */
     public function testGetTitle(): void
     {
-        self::assertEquals('IDE Model Annotations', self::$task->getTitle());
+        self::assertEquals('Model Annotations Generator', self::$task->getTitle());
     }
 
     /**
-     * @covers \CSoellinger\SilverStripe\ModelAnnotation\Task\ModelAnnotationTask::getDescription
+     * @covers \CSoellinger\SilverStripe\ModelAnnotation\Task\ModelAnnotationsTask::getDescription
      */
     public function testGetDescription(): void
     {
-        $description = implode('', [
-            'Add ide annotations for dataobject models. ',
-            'This is helpful to get auto completions for db fields ',
-            'and relations in your ide (most should support it). Be ',
-            'careful: This software writes your files. So it normally ',
-            'should not crash your code be aware that this could happen. ',
-            'So turning on backup files config could be a good idea if ',
-            'you have very complex data objects ;-)',
-        ]);
+        $description = "
+        Add ide annotations for dataobject models. This is helpful to get auto
+        completions for db fields and relations in your ide (most should
+        support it). This task (over)write files so it's always a good idea to
+        make a dryRun and/or backup files.
+
+		Parameters (optional):
+        - dataClass: Generate annotations only for one class. If not set all found data object classes will be used.
+		- createBackupFile: Create a backup before writing a file. (default: FALSE)
+		- addUseStatements: Add use statements for data types which are not declared (default: FALSE)
+		- dryRun: Only print changes and don't write file (default: TRUE)
+		- quiet: No outputs (default: FALSE)
+	";
 
         self::assertEquals($description, self::$task->getDescription());
     }
 
     /**
-     * @covers \CSoellinger\SilverStripe\ModelAnnotation\Task\ModelAnnotationTask::run
+     * @covers \CSoellinger\SilverStripe\ModelAnnotation\Task\ModelAnnotationsTask::setUtil
      */
-    public function testTaskRunWithDryRunForOneClass(): void
+    public function testSetUtil(): void
     {
+        self::$task->setUtil(new Util());
+
+        self::assertInstanceOf(ModelAnnotationsTask::class, self::$task);
+    }
+
+    /**
+     * @covers \CSoellinger\SilverStripe\ModelAnnotation\Task\ModelAnnotationsTask::setRequest
+     */
+    public function testSetRequest(): void
+    {
+        self::$task->setRequest(new HTTPRequest('GET', '/'));
+
+        self::assertInstanceOf(ModelAnnotationsTask::class, self::$task);
+    }
+
+    /**
+     * @covers \CSoellinger\SilverStripe\ModelAnnotation\Task\ModelAnnotationsTask::setLogger
+     */
+    public function testSetLogger(): void
+    {
+        /** @var Logger $logger */
+        $logger = Injector::inst()->get(LoggerInterface::class);
+
+        self::$task->setLogger($logger);
+
+        self::assertInstanceOf(ModelAnnotationsTask::class, self::$task);
+    }
+
+    /**
+     * @covers \CSoellinger\SilverStripe\ModelAnnotation\Task\ModelAnnotationsTask::run
+     */
+    public function testTaskRunNotOnDev(): void
+    {
+        /** @var Kernel $kernel */
+        $kernel = Injector::inst()->get(Kernel::class);
+        $kernel->setEnvironment('live');
+
         $output = [
-            date('d.m.Y H:m'),
-            '',
-            '',
-            'CSoellinger\SilverStripe\ModelAnnotation\Test\Unit\Player',
-            '/var/www/html/tests/unit/Player.php',
-            '<?php',
-            '',
-            'namespace CSoellinger\SilverStripe\ModelAnnotation\Test\Unit;',
-            '',
-            'use SilverStripe\Dev\TestOnly;',
-            'use SilverStripe\ORM\DataObject;',
-            '',
-            '/**',
-            ' * @internal Testing model',
-            ' *',
-            ' * @property string $Name ...',
-            ' *',
-            ' * @property Team $Team   Has one Team',
-            ' * @property int  $TeamID Team ID',
-            ' */',
-            ...$this->getPlayerModelOutput(),
-            '-----------------------',
-            '',
-            'Task finished',
-            '',
+            'ERROR [Alert]: You can run this task only inside a dev environment. Your environment is: live',
+            'IN GET /dev/tasks/ModelAnnotationsTask',
+            'Line 0 in /var/www/html/src/Task/ModelAnnotationsTask.php',
             '',
             '',
         ];
 
         $this->expectOutputString(implode(PHP_EOL, $output));
+        $this->expectError();
 
-        self::$task->run($this->getRequest('CSoellinger\SilverStripe\ModelAnnotation\Test\Unit\Player'));
+        $request = $this->getRequest('CSoellinger\SilverStripe\ModelAnnotation\Test\Unit\Player');
+        self::$task->setRequest($request);
+        self::$task->run($request);
+
+        /** @var Kernel $kernel */
+        $kernel = Injector::inst()->get(Kernel::class);
+        $kernel->setEnvironment('dev');
     }
 
     /**
-     * @covers \CSoellinger\SilverStripe\ModelAnnotation\Task\ModelAnnotationTask::run
+     * @covers \CSoellinger\SilverStripe\ModelAnnotation\Task\ModelAnnotationsTask::run
      */
-    public function testTaskRunWithIgnoreFieldConfig(): void
+    public function testTaskRunErrorSilently(): void
     {
-        $output = [
-            date('d.m.Y H:m'),
-            '',
-            '',
-            'CSoellinger\SilverStripe\ModelAnnotation\Test\Unit\Player',
-            '/var/www/html/tests/unit/Player.php',
-            '<?php',
-            '',
-            'namespace CSoellinger\SilverStripe\ModelAnnotation\Test\Unit;',
-            '',
-            'use SilverStripe\Dev\TestOnly;',
-            'use SilverStripe\ORM\DataObject;',
-            '',
-            '/**',
-            ' * @internal Testing model',
-            ' *',
-            ' * @property string $Name ...',
-            ' */',
-            ...$this->getPlayerModelOutput(),
-            '-----------------------',
-            '',
-            'Task finished',
-            '',
-            '',
-            '',
-        ];
+        /** @var Kernel $kernel */
+        $kernel = Injector::inst()->get(Kernel::class);
+        $kernel->setEnvironment('live');
 
-        $this->expectOutputString(implode(PHP_EOL, $output));
-
-        self::$task->config()->set('ignoreFields', [
-            'Name',
-            'Team',
-            'LinkTracking',
-            'FileTracking',
-        ]);
-
-        self::$task->run($this->getRequest('CSoellinger\SilverStripe\ModelAnnotation\Test\Unit\Player'));
-    }
-
-    /**
-     * @covers \CSoellinger\SilverStripe\ModelAnnotation\Task\ModelAnnotationTask::run
-     */
-    public function testTaskRunWithQuietConfig(): void
-    {
         $this->expectOutputString('');
+        $this->expectError();
 
         self::$task->config()->set('quiet', true);
 
-        self::$task->run($this->getRequest('CSoellinger\SilverStripe\ModelAnnotation\Test\Unit\Player'));
-    }
-
-    /**
-     * @covers \CSoellinger\SilverStripe\ModelAnnotation\Task\ModelAnnotationTask::run
-     */
-    public function testTaskRunWithMethodPhpDoc(): void
-    {
-        $output = [
-            date('d.m.Y H:m'),
-            '',
-            '',
-            'CSoellinger\SilverStripe\ModelAnnotation\Test\Unit\Team',
-            '/var/www/html/tests/unit/Team.php',
-            '<?php',
-            '',
-            'namespace CSoellinger\SilverStripe\ModelAnnotation\Test\Unit;',
-            '',
-            'use SilverStripe\Assets\Image;',
-            'use SilverStripe\Dev\TestOnly;',
-            'use SilverStripe\ORM\DataObject;',
-            '',
-            '/**',
-            ' * @property string $Name   Name ...',
-            ' * @property string $Origin Origin ...',
-            ' *',
-            ' * @method \SilverStripe\ORM\HasManyList  Players()    Has many Players {@link Player}',
-            ' * @method \SilverStripe\ORM\ManyManyList Supporters() Many many Supporters {@link TeamSupporter}',
-            ' * @method \SilverStripe\ORM\ManyManyList Images()     Many many Images {@link Image}',
-            ' */',
-            ...$this->getTeamModelOutput(),
-            '-----------------------',
-            '',
-            'Task finished',
-            '',
-            '',
-            '',
-        ];
-
-        $this->expectOutputString(implode(PHP_EOL, $output));
-
-        self::$task->run($this->getRequest('CSoellinger\SilverStripe\ModelAnnotation\Test\Unit\Team'));
-    }
-
-    /**
-     * @covers \CSoellinger\SilverStripe\ModelAnnotation\Task\ModelAnnotationTask::run
-     */
-    public function testTaskRunOutputWithUseStatements(): void
-    {
-        $output = [
-            date('d.m.Y H:m'),
-            '',
-            '',
-            'CSoellinger\SilverStripe\ModelAnnotation\Test\Unit\Team',
-            '/var/www/html/tests/unit/Team.php',
-            '<?php',
-            '',
-            'namespace CSoellinger\SilverStripe\ModelAnnotation\Test\Unit;',
-            '',
-            'use SilverStripe\Assets\Image;',
-            'use SilverStripe\Dev\TestOnly;',
-            'use SilverStripe\ORM\DataObject;',
-            'use SilverStripe\ORM\HasManyList;',
-            'use SilverStripe\ORM\ManyManyList;',
-            '',
-            '/**',
-            ' * @property string $Name   Name ...',
-            ' * @property string $Origin Origin ...',
-            ' *',
-            ' * @method HasManyList  Players()    Has many Players {@link Player}',
-            ' * @method ManyManyList Supporters() Many many Supporters {@link TeamSupporter}',
-            ' * @method ManyManyList Images()     Many many Images {@link Image}',
-            ' */',
-            ...$this->getTeamModelOutput(),
-            '-----------------------',
-            '',
-            'Task finished',
-            '',
-            '',
-            '',
-        ];
-
-        $this->expectOutputString(implode(PHP_EOL, $output));
-
-        self::$task->config()->set('addUseStatements', true);
-
-        self::$task->run($this->getRequest('CSoellinger\SilverStripe\ModelAnnotation\Test\Unit\Team'));
-    }
-
-    /**
-     * @covers \CSoellinger\SilverStripe\ModelAnnotation\Task\ModelAnnotationTask::run
-     */
-    public function testTaskRunWriteToFileIncludingBackupFile(): void
-    {
-        if (!file_exists(__DIR__ . '/../../../build/cache/test')) {
-            mkdir(__DIR__ . '/../../../build/cache/test', 0777, true);
-        }
-
-        copy(__DIR__ . '/../Team.php', __DIR__ . '/../../../build/cache/test/Team.BeforeTest.tmp');
-
-        self::$task->config()->set('addUseStatements', true);
-        self::$task->config()->set('createBackupFile', true);
-
-        $request = $this->getRequest('CSoellinger\SilverStripe\ModelAnnotation\Test\Unit\Team', 0);
-
-        $this->expectOutputString(implode(PHP_EOL, [
-            date('d.m.Y H:m'),
-            '',
-            '',
-            'CSoellinger\SilverStripe\ModelAnnotation\Test\Unit\Team',
-            '/var/www/html/tests/unit/Team.php',
-            'Creating backup file at /var/www/html/tests/unit/Team.php.bck',
-            'Writing file /var/www/html/tests/unit/Team.php',
-            '-----------------------',
-            '',
-            'Task finished',
-            '',
-            '',
-            '',
-        ]));
-
+        $request = $this->getRequest('CSoellinger\SilverStripe\ModelAnnotation\Test\Unit\Player');
+        self::$task->setRequest($request);
         self::$task->run($request);
 
-        $fileContent = file_get_contents(__DIR__ . '/../Team.php');
-        $fileShouldBe = implode(PHP_EOL, [
-            '<?php',
+        /** @var Kernel $kernel */
+        $kernel = Injector::inst()->get(Kernel::class);
+        $kernel->setEnvironment('dev');
+    }
+
+    /**
+     * @covers \CSoellinger\SilverStripe\ModelAnnotation\Task\ModelAnnotationsTask::run
+     */
+    public function testTaskRunNotAdminNotCli(): void
+    {
+        PhpUnitHelper::$phpSapiName = 'apache';
+
+        $output = [
+            'ERROR [Alert]: Inside browser only admins are allowed to run this task.',
+            'IN GET /dev/tasks/ModelAnnotationsTask',
+            'Line 0 in /var/www/html/src/Task/ModelAnnotationsTask.php',
             '',
-            'namespace CSoellinger\SilverStripe\ModelAnnotation\Test\Unit;',
             '',
-            'use SilverStripe\Assets\Image;',
-            'use SilverStripe\Dev\TestOnly;',
-            'use SilverStripe\ORM\DataObject;',
-            'use SilverStripe\ORM\HasManyList;',
-            'use SilverStripe\ORM\ManyManyList;',
+        ];
+
+        $this->expectOutputString(implode(PHP_EOL, $output));
+        $this->expectError();
+
+        $request = $this->getRequest('CSoellinger\SilverStripe\ModelAnnotation\Test\Unit\Player');
+        self::$task->setRequest($request);
+        self::$task->run($request);
+    }
+
+    /**
+     * @covers \CSoellinger\SilverStripe\ModelAnnotation\Task\ModelAnnotationsTask::run
+     * @dataProvider provideFqnArray
+     */
+    public function testTaskRunWithDryRunForOneClass(string $fqn, string $expectedOutput): void
+    {
+        $this->expectOutputString($expectedOutput);
+
+        $request = $this->getRequest($fqn);
+        self::$task->setRequest($request);
+        self::$task->run($request);
+    }
+
+    /**
+     * @covers \CSoellinger\SilverStripe\ModelAnnotation\Task\ModelAnnotationsTask::run
+     */
+    public function testTaskRunWithDryRunForOneClassWithCollectedUse(): void
+    {
+        $fqn = $this->provideFqnArray()[2][0];
+        $expected = $this->provideFqnArray()[2][2];
+
+        $this->expectOutputString($expected);
+        self::$task->config()->set('addUseStatements', true);
+
+        $request = $this->getRequest($fqn);
+        self::$task->setRequest($request);
+        self::$task->run($request);
+    }
+
+    /**
+     * @covers \CSoellinger\SilverStripe\ModelAnnotation\Task\ModelAnnotationsTask::run
+     */
+    public function testTaskRunWithNotExistingClass(): void
+    {
+        $output = implode(PHP_EOL, [
+            'PARAMS',
+            '| dataClass: \Not\Existing\Class | dryRun: true | addUseStatements: false | createBackupFile: false',
+            '| quiet: false |',
+            '----------------------------------------------------------------------------------------------------',
             '',
-            '/**',
-            ' * @property string $Name   Name ...',
-            ' * @property string $Origin Origin ...',
-            ' *',
-            ' * @method HasManyList  Players()    Has many Players {@link Player}',
-            ' * @method ManyManyList Supporters() Many many Supporters {@link TeamSupporter}',
-            ' * @method ManyManyList Images()     Many many Images {@link Image}',
-            ' */',
-            ...$this->getTeamModelOutput(),
+            '',
+            'ERROR [Alert]: Data class "\not\existing\class" does not exist',
+            'IN GET /dev/tasks/ModelAnnotationsTask',
+            'Line 0 in /var/www/html/src/Task/ModelAnnotationsTask.php',
+            '',
             '',
         ]);
+        $this->expectError();
+        $this->expectOutputString($output);
 
-        self::assertFileExists(__DIR__ . '/../Team.php.bck');
-        self::assertEquals($fileShouldBe, $fileContent);
-
-        unlink(__DIR__ . '/../Team.php');
-        unlink(__DIR__ . '/../Team.php.bck');
-
-        copy(__DIR__ . '/../../../build/cache/test/Team.BeforeTest.tmp', __DIR__ . '/../Team.php');
-
-        unlink(__DIR__ . '/../../../build/cache/test/Team.BeforeTest.tmp');
-    }
-
-
-    /**
-     * @covers \CSoellinger\SilverStripe\ModelAnnotation\Task\ModelAnnotationTask::run
-     */
-    public function testTaskRunWriteToFileIncludingSecondBackupFile(): void
-    {
-        if (!file_exists(__DIR__ . '/../../../build/cache/test')) {
-            mkdir(__DIR__ . '/../../../build/cache/test', 0777, true);
-        }
-
-        copy(__DIR__ . '/../Team.php', __DIR__ . '/../../../build/cache/test/Team.BeforeTest.tmp');
-        copy(__DIR__ . '/../Team.php', __DIR__ . '/../Team.php.bck');
-
-        self::$task->config()->set('quiet', true);
-        self::$task->config()->set('createBackupFile', true);
-
-        $request = $this->getRequest('CSoellinger\SilverStripe\ModelAnnotation\Test\Unit\Team', 0);
-
+        $request = $this->getRequest('\\Not\\Existing\\Class');
+        self::$task->setRequest($request);
         self::$task->run($request);
-
-        self::assertFileExists(__DIR__ . '/../Team.php.1.bck');
-
-        unlink(__DIR__ . '/../Team.php');
-        unlink(__DIR__ . '/../Team.php.bck');
-        unlink(__DIR__ . '/../Team.php.1.bck');
-
-        copy(__DIR__ . '/../../../build/cache/test/Team.BeforeTest.tmp', __DIR__ . '/../Team.php');
-
-        unlink(__DIR__ . '/../../../build/cache/test/Team.BeforeTest.tmp');
     }
 
     /**
-     * @covers \CSoellinger\SilverStripe\ModelAnnotation\Task\ModelAnnotationTask::run
+     * @covers \CSoellinger\SilverStripe\ModelAnnotation\Task\ModelAnnotationsTask::run
      */
-    public function testNothingToUpdate(): void
+    public function testTaskRunWritingFile(): void
     {
-        $this->expectOutputString(implode(PHP_EOL, [
-            date('d.m.Y H:m'),
+        $fqn = $this->provideFqnArray()[2][0];
+        $expected = implode(PHP_EOL, [
+            'PARAMS',
+            '| dataClass: CSoellinger\SilverStripe\ModelAnnotation\Test\Unit\Team | dryRun: false |',
+            'addUseStatements: false | createBackupFile: false | quiet: false |',
+            '----------------------------------------------------------------------------------------------------',
             '',
             '',
-            'CSoellinger\SilverStripe\ModelAnnotation\Test\Unit\TeamSupporter',
-            '/var/www/html/tests/unit/TeamSupporter.php',
-            'No update for /var/www/html/tests/unit/TeamSupporter.php',
-            '-----------------------',
+            'CSoellinger\SilverStripe\ModelAnnotation\Test\Unit\Team',
+            'File: /var/www/html/tests/unit/Team.php',
             '',
-            'Task finished',
+            'Generating annotations done',
             '',
             '',
-            '',
-        ]));
+        ]);
+        $expectedFile = $this->provideFqnArray()[2][3];
 
-        $request = $this->getRequest('CSoellinger\SilverStripe\ModelAnnotation\Test\Unit\TeamSupporter', 0);
+        $this->expectOutputString($expected);
 
+        $modelFile = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'Team.php';
+        $testBackup = implode(DIRECTORY_SEPARATOR, [
+            __DIR__,
+            '..',
+            '..',
+            '..',
+            'build',
+            'cache',
+            'Team.php.test',
+        ]);
+
+        copy($modelFile, $testBackup);
+
+        $request = $this->getRequest($fqn, 0);
+
+        self::$task->setRequest($request);
         self::$task->run($request);
-        // TeamSupporter
 
-        self::assertTrue(true);
+        self::assertEquals($expectedFile, file_get_contents($modelFile));
+
+        unlink($modelFile);
+        copy($testBackup, $modelFile);
+        unlink($testBackup);
     }
 
     /**
-     * @covers \CSoellinger\SilverStripe\ModelAnnotation\Task\ModelAnnotationTask::run
+     * @return array<int,string[]>
      */
-    public function testBadClassName(): void
+    public function provideFqnArray()
     {
-        $this->expectException(Exception::class);
-
-        $request = $this->getRequest('Not\\Existing\\Class', 0);
-
-        self::$task->run($request);
+        return [
+            [
+                'CSoellinger\SilverStripe\ModelAnnotation\Test\Unit\Player',
+                implode(PHP_EOL, [
+                    'PARAMS',
+                    '| dataClass: CSoellinger\SilverStripe\ModelAnnotation\Test\Unit\Player | dryRun: true |',
+                    'addUseStatements: false | createBackupFile: false | quiet: false |',
+                    '--------------------------------------------------------------------------------------------' .
+                        '--------',
+                    '',
+                    '',
+                    'CSoellinger\SilverStripe\ModelAnnotation\Test\Unit\Player',
+                    'File: /var/www/html/tests/unit/Player.php',
+                    '',
+                    'Generating annotations done',
+                    '',
+                    '<?php',
+                    '',
+                    'namespace CSoellinger\SilverStripe\ModelAnnotation\Test\Unit;',
+                    '',
+                    'use SilverStripe\Dev\TestOnly;',
+                    'use SilverStripe\ORM\DataObject;',
+                    '',
+                    '/**',
+                    ' * @internal Testing model',
+                    ' *',
+                    ' * @property string $Name ...',
+                    ' *',
+                    ' * @property Team $Team   Has one Team {@see Team}',
+                    ' * @property int  $TeamID Team ID',
+                    ' */',
+                    ...$this->getPlayerModelOutput(),
+                    '',
+                    '',
+                    '',
+                ]),
+            ],
+            [
+                'CSoellinger\SilverStripe\ModelAnnotation\Test\Unit\Supporter',
+                implode(PHP_EOL, [
+                    'PARAMS',
+                    '| dataClass: CSoellinger\SilverStripe\ModelAnnotation\Test\Unit\Supporter | dryRun: true |',
+                    'addUseStatements: false | createBackupFile: false | quiet: false |',
+                    '--------------------------------------------------------------------------------------------' .
+                        '--------',
+                    '',
+                    '',
+                    'CSoellinger\SilverStripe\ModelAnnotation\Test\Unit\Supporter',
+                    'File: /var/www/html/tests/unit/Supporter.php',
+                    '',
+                    'Generating annotations done',
+                    '',
+                    '<?php',
+                    '',
+                    'namespace CSoellinger\SilverStripe\ModelAnnotation\Test\Unit;',
+                    '',
+                    'use SilverStripe\Dev\TestOnly;',
+                    'use SilverStripe\ORM\DataObject;',
+                    'use SilverStripe\ORM\ManyManyList;',
+                    '',
+                    '/**',
+                    ' * @internal Testing model',
+                    ' *',
+                    ' * @method ManyManyList Supports() ...',
+                    ' */',
+                    ...$this->getSupporterModelOutput(),
+                    '',
+                    '',
+                    '',
+                ]),
+            ],
+            [
+                'CSoellinger\SilverStripe\ModelAnnotation\Test\Unit\Team',
+                implode(PHP_EOL, [
+                    'PARAMS',
+                    '| dataClass: CSoellinger\SilverStripe\ModelAnnotation\Test\Unit\Team | dryRun: true |',
+                    'addUseStatements: false | createBackupFile: false | quiet: false |',
+                    '----------------------------------------------------------------------------------------------' .
+                        '------',
+                    '',
+                    '',
+                    'CSoellinger\SilverStripe\ModelAnnotation\Test\Unit\Team',
+                    'File: /var/www/html/tests/unit/Team.php',
+                    '',
+                    'Generating annotations done',
+                    '',
+                    '<?php',
+                    '',
+                    'namespace CSoellinger\SilverStripe\ModelAnnotation\Test\Unit;',
+                    '',
+                    'use SilverStripe\Assets\Image;',
+                    'use SilverStripe\Dev\TestOnly;',
+                    'use SilverStripe\ORM\DataObject;',
+                    '',
+                    '/**',
+                    ' * @property string $Name   Name ...',
+                    ' * @property string $Origin Origin ...',
+                    ' *',
+                    ' * @method \SilverStripe\ORM\HasManyList  Players()    Has many Players {@see Player}',
+                    ' * @method \SilverStripe\ORM\ManyManyList Supporters() Many many Supporters {@see TeamSupporter}',
+                    ' * @method \SilverStripe\ORM\ManyManyList Images()     Many many Images {@see Image}',
+                    ' */',
+                    ...$this->getTeamModelOutput(),
+                    '',
+                    '',
+                    '',
+                ]),
+                implode(PHP_EOL, [
+                    'PARAMS',
+                    '| dataClass: CSoellinger\SilverStripe\ModelAnnotation\Test\Unit\Team | dryRun: true |',
+                    'addUseStatements: true | createBackupFile: false | quiet: false |',
+                    '-----------------------------------------------------------------------------------------------' .
+                        '-----',
+                    '',
+                    '',
+                    'CSoellinger\SilverStripe\ModelAnnotation\Test\Unit\Team',
+                    'File: /var/www/html/tests/unit/Team.php',
+                    '',
+                    'Generating annotations done',
+                    '',
+                    '<?php',
+                    '',
+                    'namespace CSoellinger\SilverStripe\ModelAnnotation\Test\Unit;',
+                    '',
+                    'use SilverStripe\Assets\Image;',
+                    'use SilverStripe\Dev\TestOnly;',
+                    'use SilverStripe\ORM\DataObject;',
+                    'use SilverStripe\ORM\HasManyList;',
+                    'use SilverStripe\ORM\ManyManyList;',
+                    '',
+                    '/**',
+                    ' * @property string $Name   Name ...',
+                    ' * @property string $Origin Origin ...',
+                    ' *',
+                    ' * @method HasManyList  Players()    Has many Players {@see Player}',
+                    ' * @method ManyManyList Supporters() Many many Supporters {@see TeamSupporter}',
+                    ' * @method ManyManyList Images()     Many many Images {@see Image}',
+                    ' */',
+                    ...$this->getTeamModelOutput(),
+                    '',
+                    '',
+                    '',
+                ]),
+                implode(PHP_EOL, [
+                    '<?php',
+                    '',
+                    'namespace CSoellinger\SilverStripe\ModelAnnotation\Test\Unit;',
+                    '',
+                    'use SilverStripe\Assets\Image;',
+                    'use SilverStripe\Dev\TestOnly;',
+                    'use SilverStripe\ORM\DataObject;',
+                    '',
+                    '/**',
+                    ' * @property string $Name   Name ...',
+                    ' * @property string $Origin Origin ...',
+                    ' *',
+                    ' * @method \SilverStripe\ORM\HasManyList  Players()    Has many Players {@see Player}',
+                    ' * @method \SilverStripe\ORM\ManyManyList Supporters() Many many Supporters {@see TeamSupporter}',
+                    ' * @method \SilverStripe\ORM\ManyManyList Images()     Many many Images {@see Image}',
+                    ' */',
+                    ...$this->getTeamModelOutput(),
+                    '',
+                ]),
+            ],
+            [
+                'CSoellinger\SilverStripe\ModelAnnotation\Test\Unit\TeamSupporter',
+                implode(PHP_EOL, [
+                    'PARAMS',
+                    '| dataClass: CSoellinger\SilverStripe\ModelAnnotation\Test\Unit\TeamSupporter | dryRun: true |',
+                    'addUseStatements: false | createBackupFile: false | quiet: false |',
+                    '-----------------------------------------------------------------------------------------------'.
+                        '-----',
+                    '',
+                    '',
+                    'CSoellinger\SilverStripe\ModelAnnotation\Test\Unit\TeamSupporter',
+                    'File: /var/www/html/tests/unit/TeamSupporter.php',
+                    '',
+                    'Generating annotations done',
+                    '',
+                    '<?php',
+                    '',
+                    'namespace CSoellinger\SilverStripe\ModelAnnotation\Test\Unit;',
+                    '',
+                    'use SilverStripe\Dev\TestOnly;',
+                    'use SilverStripe\ORM\DataObject;',
+                    '',
+                    '/**',
+                    ' * @property int       $Ranking     Ranking ...',
+                    ' * @property int       $TeamID      Team ID',
+                    ' * @property Supporter $Supporter   Has one Supporter',
+                    ' *',
+                    ' * @property Team $Team        Has one Team {@see Team}',
+                    ' * @property int  $SupporterID Supporter ID',
+                    ' */',
+                    ...$this->getTeamSupporterModelOutput(),
+                    '',
+                    '',
+                    '',
+                ]),
+            ],
+        ];
     }
 
     private function getRequest(
         string $dataClass = null,
         int $dryRun = 1,
         string $method = 'GET',
-        string $url = '/dev/tasks/CSoellinger-SilverStripe-ModelAnnotation-Task-ModelAnnotationTask'
+        string $url = '/dev/tasks/ModelAnnotationsTask'
     ): HTTPRequest {
         $opts = ['dryRun' => $dryRun];
 
@@ -436,7 +568,51 @@ class ModelAnnotationTaskTest extends SapphireTest
             '     * @var array<string,string> undocumented variable',
             '     */',
             '    private static $has_one = [',
+            '        \'Team\' => Team::class . \'.ID\',',
+            '    ];',
+            '}',
+        ];
+    }
+
+    /**
+     * @return string[]
+     */
+    private function getSupporterModelOutput(): array
+    {
+        return [
+            'class Supporter extends DataObject implements TestOnly',
+            '{',
+            '    /**',
+            '     * @var array<string,string> undocumented variable',
+            '     */',
+            '    private static $belongs_many_many = [',
+            '        \'Supports\' => Team::class . \'.Supporters\',',
+            '    ];',
+            '}',
+        ];
+    }
+
+    /**
+     * @return string[]
+     */
+    private function getTeamSupporterModelOutput(): array
+    {
+        return [
+            'class TeamSupporter extends DataObject implements TestOnly',
+            '{',
+            '    /**',
+            '     * @var array<string,string> undocumented variable',
+            '     */',
+            '    private static $db = [',
+            '        \'Ranking\' => \'Int\',',
+            '    ];',
+            '',
+            '    /**',
+            '     * @var array<string,string> undocumented variable',
+            '     */',
+            '    private static $has_one = [',
             '        \'Team\' => Team::class,',
+            '        \'Supporter\' => Supporter::class,',
             '    ];',
             '}',
         ];
@@ -458,6 +634,7 @@ class ModelAnnotationTaskTest extends SapphireTest
             '    private static $db = [',
             '        \'Name\' => \'Varchar(255)\',',
             '        \'Origin\' => \'Varchar(255)\',',
+            '        \'LinkTracking\' => \'Boolean\',',
             '    ];',
             '',
             '    /**',
@@ -465,6 +642,7 @@ class ModelAnnotationTaskTest extends SapphireTest
             '     */',
             '    private static $has_many = [',
             '        \'Players\' => Player::class,',
+            '        \'FileTracking\' => Image::class,',
             '    ];',
             '',
             '    /**',

@@ -3,6 +3,8 @@
     errorLevel="1"
     cacheDirectory="./build/cache/psalm"
     resolveFromConfigFile="true"
+    runTaintAnalysis="false"
+    hideExternalErrors="false"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns="https://getpsalm.org/schema/config"
     xsi:schemaLocation="https://getpsalm.org/schema/config vendor/vimeo/psalm/config.xsd"
@@ -10,8 +12,8 @@
     <projectFiles>
         <directory name="src" />
         <ignoreFiles>
-            <directory name="./tests"/>
-            <directory name="./vendor" />
+            <directory name="tests"/>
+            <directory name="vendor" />
         </ignoreFiles>
     </projectFiles>
 </psalm>
