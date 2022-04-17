@@ -48,6 +48,7 @@ class DataClassFileHandlerTest extends SapphireTest
     /**
      * @covers \CSoellinger\SilverStripe\ModelAnnotations\Handler\DataClassFileHandler::__construct
      * @throws Exception
+     * @group ExpectedOutput
      */
     public function testInitializeWrongPath(): void
     {

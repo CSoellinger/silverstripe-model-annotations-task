@@ -45,6 +45,7 @@ class DataClassTaskViewTest extends SapphireTest
 
     /**
      * @covers \CSoellinger\SilverStripe\ModelAnnotations\View\DataClassTaskView::renderHeader
+     * @group ExpectedOutput
      */
     public function testRenderHeader(): void
     {
@@ -58,6 +59,7 @@ class DataClassTaskViewTest extends SapphireTest
 
     /**
      * @covers \CSoellinger\SilverStripe\ModelAnnotations\View\DataClassTaskView::renderHeader
+     * @group ExpectedOutput
      */
     public function testRenderHeaderHtml(): void
     {
@@ -74,6 +76,7 @@ class DataClassTaskViewTest extends SapphireTest
 
     /**
      * @covers \CSoellinger\SilverStripe\ModelAnnotations\View\DataClassTaskView::renderMessage
+     * @group ExpectedOutput
      */
     public function testRenderMessage(): void
     {
@@ -86,6 +89,7 @@ class DataClassTaskViewTest extends SapphireTest
 
     /**
      * @covers \CSoellinger\SilverStripe\ModelAnnotations\View\DataClassTaskView::renderMessage
+     * @group ExpectedOutput
      */
     public function testRenderMessageHtml(): void
     {
@@ -104,6 +108,7 @@ class DataClassTaskViewTest extends SapphireTest
 
     /**
      * @covers \CSoellinger\SilverStripe\ModelAnnotations\View\DataClassTaskView::renderSource
+     * @group ExpectedOutput
      */
     public function testRenderSource(): void
     {
@@ -116,6 +121,7 @@ class DataClassTaskViewTest extends SapphireTest
 
     /**
      * @covers \CSoellinger\SilverStripe\ModelAnnotations\View\DataClassTaskView::renderSource
+     * @group ExpectedOutput
      */
     public function testRenderSourceHtml(): void
     {
@@ -133,6 +139,7 @@ class DataClassTaskViewTest extends SapphireTest
 
     /**
      * @covers \CSoellinger\SilverStripe\ModelAnnotations\View\DataClassTaskView::renderHr
+     * @group ExpectedOutput
      */
     public function testRenderHr(): void
     {
@@ -145,6 +152,7 @@ class DataClassTaskViewTest extends SapphireTest
 
     /**
      * @covers \CSoellinger\SilverStripe\ModelAnnotations\View\DataClassTaskView::renderHr
+     * @group ExpectedOutput
      */
     public function testRenderHrHtml(): void
     {

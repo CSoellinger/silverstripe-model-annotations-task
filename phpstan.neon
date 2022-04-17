@@ -36,25 +36,25 @@ parameters:
 			path: src/Handler/DataClassHandler.php
 		-
 			message: '#^Static property CSoellinger\\SilverStripe\\ModelAnnotations\\Test\\Unit\\Player\:\:\$db is never read, only written\.$#'
-			path: tests/unit/Player.php
+			path: tests/Unit/Player.php
 		-
 			message: '#^Static property CSoellinger\\SilverStripe\\ModelAnnotations\\Test\\Unit\\Player\:\:\$has_one is never read, only written\.$#'
-			path: tests/unit/Player.php
+			path: tests/Unit/Player.php
 		-
 			message: '#^Static property CSoellinger\\SilverStripe\\ModelAnnotations\\Test\\Unit\\Team\:\:\$db is never read, only written\.$#'
-			path: tests/unit/Team.php
+			path: tests/Unit/Team.php
 		-
 			message: '#^Static property CSoellinger\\SilverStripe\\ModelAnnotations\\Test\\Unit\\Team\:\:\$has_many is never read, only written\.$#'
-			path: tests/unit/Team.php
+			path: tests/Unit/Team.php
 		-
 			message: '#^Static property CSoellinger\\SilverStripe\\ModelAnnotations\\Test\\Unit\\Team\:\:\$many_many is never read, only written\.$#'
-			path: tests/unit/Team.php
+			path: tests/Unit/Team.php
 		-
 			message: '#^Static property CSoellinger\\SilverStripe\\ModelAnnotations\\Test\\Unit\\TeamSupporter\:\:\$db is never read, only written\.$#'
-			path: tests/unit/TeamSupporter.php
+			path: tests/Unit/TeamSupporter.php
 		-
 			message: '#^Static property CSoellinger\\SilverStripe\\ModelAnnotations\\Test\\Unit\\TeamSupporter\:\:\$has_one is never read, only written\.$#'
-			path: tests/unit/TeamSupporter.php
+			path: tests/Unit/TeamSupporter.php
 		-
 			message: '#^Static property CSoellinger\\SilverStripe\\ModelAnnotations\\Test\\Unit\\Supporter\:\:\$belongs_many_many is never read, only written\.$#'
-			path: tests/unit/Supporter.php
+			path: tests/Unit/Supporter.php

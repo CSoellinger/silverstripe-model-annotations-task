@@ -143,6 +143,7 @@ class ModelAnnotationsTaskTest extends SapphireTest
 
     /**
      * @covers \CSoellinger\SilverStripe\ModelAnnotations\Task\ModelAnnotationsTask::run
+     * @group ExpectedOutput
      */
     public function testTaskRunNotOnDev(): void
     {
@@ -174,6 +175,7 @@ class ModelAnnotationsTaskTest extends SapphireTest
 
     /**
      * @covers \CSoellinger\SilverStripe\ModelAnnotations\Task\ModelAnnotationsTask::run
+     * @group ExpectedOutput
      */
     public function testTaskRunErrorSilently(): void
     {
@@ -197,6 +199,7 @@ class ModelAnnotationsTaskTest extends SapphireTest
 
     /**
      * @covers \CSoellinger\SilverStripe\ModelAnnotations\Task\ModelAnnotationsTask::run
+     * @group ExpectedOutput
      */
     public function testTaskRunNotAdminNotCli(): void
     {
@@ -223,6 +226,7 @@ class ModelAnnotationsTaskTest extends SapphireTest
     /**
      * @covers \CSoellinger\SilverStripe\ModelAnnotations\Task\ModelAnnotationsTask::run
      * @dataProvider provideFqnArray
+     * @group ExpectedOutput
      */
     public function testTaskRunWithDryRunForOneClass(string $fqn, string $expectedOutput): void
     {
@@ -235,6 +239,7 @@ class ModelAnnotationsTaskTest extends SapphireTest
 
     /**
      * @covers \CSoellinger\SilverStripe\ModelAnnotations\Task\ModelAnnotationsTask::run
+     * @group ExpectedOutput
      */
     public function testTaskRunWithDryRunForOneClassWithCollectedUse(): void
     {
@@ -251,6 +256,7 @@ class ModelAnnotationsTaskTest extends SapphireTest
 
     /**
      * @covers \CSoellinger\SilverStripe\ModelAnnotations\Task\ModelAnnotationsTask::run
+     * @group ExpectedOutput
      */
     public function testTaskRunWithNotExistingClass(): void
     {
@@ -279,6 +285,7 @@ class ModelAnnotationsTaskTest extends SapphireTest
 
     /**
      * @covers \CSoellinger\SilverStripe\ModelAnnotations\Task\ModelAnnotationsTask::run
+     * @group ExpectedOutput
      */
     public function testTaskRunWritingFile(): void
     {

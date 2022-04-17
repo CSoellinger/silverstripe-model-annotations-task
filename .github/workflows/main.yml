@@ -68,8 +68,14 @@ jobs:
       - name: Run Migration
         run: ./vendor/bin/sake dev/build "flush=all"
 
-      - name: Run phpcs
-        run: composer test:all
+      - name: Run lint
+        run: composer lint:all
+
+      - name: Run analyze
+        run: composer analyze:all
+
+      - name: Run tests
+        run: composer test:unit -- --exclude-group ExpectedOutput
   # coverage:
   #   timeout-minutes: 15
   #   name: Code Coverage
