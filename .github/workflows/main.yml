@@ -26,8 +26,6 @@ jobs:
       fail-fast: false
       matrix:
         versions:
-          - php: '7.3'
-            silverstripe: '4.10.x-dev'
           - php: '7.4'
             silverstripe: '4.10.x-dev'
           - php: '8.0'
