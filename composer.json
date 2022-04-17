@@ -31,7 +31,7 @@
         "issues": "https://github.com/CSoellinger/silverstripe-model-annotations-task/issues"
     },
     "require": {
-        "php": ">=7.3,<8.1",
+        "php": ">=7.4,<8.1",
         "ext-ast": "*",
         "silverstripe/framework": "~4.10"
     },
