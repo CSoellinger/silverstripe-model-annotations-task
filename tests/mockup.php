@@ -1,6 +1,6 @@
 <?php
 
-namespace CSoellinger\SilverStripe\ModelAnnotation\Test;
+namespace CSoellinger\SilverStripe\ModelAnnotations\Test;
 
 class PhpUnitHelper
 {
@@ -9,7 +9,7 @@ class PhpUnitHelper
 
 namespace SilverStripe\Core;
 
-use CSoellinger\SilverStripe\ModelAnnotation\Test\PhpUnitHelper;
+use CSoellinger\SilverStripe\ModelAnnotations\Test\PhpUnitHelper;
 
 function php_sapi_name(): string
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace CSoellinger\SilverStripe\ModelAnnotation\Test\Unit;
+namespace CSoellinger\SilverStripe\ModelAnnotations\Test\Unit;
 
 use SilverStripe\Dev\TestOnly;
 use SilverStripe\ORM\DataObject;

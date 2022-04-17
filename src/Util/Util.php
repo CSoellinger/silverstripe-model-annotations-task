@@ -1,6 +1,6 @@
 <?php
 
-namespace CSoellinger\SilverStripe\ModelAnnotation\Util;
+namespace CSoellinger\SilverStripe\ModelAnnotations\Util;
 
 use ReflectionClass;
 use ReflectionFunction;

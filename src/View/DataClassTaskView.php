@@ -1,6 +1,6 @@
 <?php
 
-namespace CSoellinger\SilverStripe\ModelAnnotation\View;
+namespace CSoellinger\SilverStripe\ModelAnnotations\View;
 
 use SilverStripe\Control\Director;
 use SilverStripe\Core\Injector\Injectable;

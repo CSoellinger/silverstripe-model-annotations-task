@@ -1,8 +1,8 @@
 <?php
 
-namespace CSoellinger\SilverStripe\ModelAnnotation\Handler;
+namespace CSoellinger\SilverStripe\ModelAnnotations\Handler;
 
-use CSoellinger\SilverStripe\ModelAnnotation\Task\ModelAnnotationsTask;
+use CSoellinger\SilverStripe\ModelAnnotations\Task\ModelAnnotationsTask;
 use Exception;
 use SilverStripe\Core\ClassInfo;
 use SilverStripe\Core\Config\Config;

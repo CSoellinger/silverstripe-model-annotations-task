@@ -1,10 +1,10 @@
 <?php
 
-namespace CSoellinger\SilverStripe\ModelAnnotation\Task;
+namespace CSoellinger\SilverStripe\ModelAnnotations\Task;
 
-use CSoellinger\SilverStripe\ModelAnnotation\Handler\DataClassHandler;
-use CSoellinger\SilverStripe\ModelAnnotation\Util\Util;
-use CSoellinger\SilverStripe\ModelAnnotation\View\DataClassTaskView;
+use CSoellinger\SilverStripe\ModelAnnotations\Handler\DataClassHandler;
+use CSoellinger\SilverStripe\ModelAnnotations\Util\Util;
+use CSoellinger\SilverStripe\ModelAnnotations\View\DataClassTaskView;
 use Error;
 use Exception;
 use Monolog\Logger;

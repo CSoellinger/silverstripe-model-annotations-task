@@ -1,10 +1,10 @@
 <?php
 
-namespace CSoellinger\SilverStripe\ModelAnnotation\Test\Unit\Handler;
+namespace CSoellinger\SilverStripe\ModelAnnotations\Test\Unit\Handler;
 
-use CSoellinger\SilverStripe\ModelAnnotation\Handler\DataClassFileHandler;
-use CSoellinger\SilverStripe\ModelAnnotation\Task\ModelAnnotationsTask;
-use CSoellinger\SilverStripe\ModelAnnotation\Util\Util;
+use CSoellinger\SilverStripe\ModelAnnotations\Handler\DataClassFileHandler;
+use CSoellinger\SilverStripe\ModelAnnotations\Task\ModelAnnotationsTask;
+use CSoellinger\SilverStripe\ModelAnnotations\Util\Util;
 use Exception;
 use Reflection;
 use SilverStripe\Core\Config\Config;
@@ -15,7 +15,7 @@ use SilverStripe\ORM\DataObject;
 /**
  * @internal
  *
- * @covers \CSoellinger\SilverStripe\ModelAnnotation\Handler\DataClassFileHandler
+ * @covers \CSoellinger\SilverStripe\ModelAnnotations\Handler\DataClassFileHandler
  */
 class DataClassFileHandlerTest extends SapphireTest
 {
@@ -37,7 +37,7 @@ class DataClassFileHandlerTest extends SapphireTest
     }
 
     /**
-     * @covers \CSoellinger\SilverStripe\ModelAnnotation\Handler\DataClassFileHandler::__construct
+     * @covers \CSoellinger\SilverStripe\ModelAnnotations\Handler\DataClassFileHandler::__construct
      */
     public function testInitialize(): void
     {
@@ -46,7 +46,7 @@ class DataClassFileHandlerTest extends SapphireTest
     }
 
     /**
-     * @covers \CSoellinger\SilverStripe\ModelAnnotation\Handler\DataClassFileHandler::__construct
+     * @covers \CSoellinger\SilverStripe\ModelAnnotations\Handler\DataClassFileHandler::__construct
      * @throws Exception
      */
     public function testInitializeWrongPath(): void
@@ -58,7 +58,7 @@ class DataClassFileHandlerTest extends SapphireTest
     }
 
     /**
-     * @covers \CSoellinger\SilverStripe\ModelAnnotation\Handler\DataClassFileHandler::getPath
+     * @covers \CSoellinger\SilverStripe\ModelAnnotations\Handler\DataClassFileHandler::getPath
      */
     public function testGetPath(): void
     {
@@ -66,7 +66,7 @@ class DataClassFileHandlerTest extends SapphireTest
     }
 
     /**
-     * @covers \CSoellinger\SilverStripe\ModelAnnotation\Handler\DataClassFileHandler::getContent
+     * @covers \CSoellinger\SilverStripe\ModelAnnotations\Handler\DataClassFileHandler::getContent
      */
     public function testGetContent(): void
     {
@@ -74,7 +74,7 @@ class DataClassFileHandlerTest extends SapphireTest
     }
 
     /**
-     * @covers \CSoellinger\SilverStripe\ModelAnnotation\Handler\DataClassFileHandler::getAst
+     * @covers \CSoellinger\SilverStripe\ModelAnnotations\Handler\DataClassFileHandler::getAst
      */
     public function testGetAst(): void
     {
@@ -82,7 +82,7 @@ class DataClassFileHandlerTest extends SapphireTest
     }
 
     /**
-     * @covers \CSoellinger\SilverStripe\ModelAnnotation\Handler\DataClassFileHandler::getNamespaceAst
+     * @covers \CSoellinger\SilverStripe\ModelAnnotations\Handler\DataClassFileHandler::getNamespaceAst
      */
     public function testGetNamespaceAst(): void
     {
@@ -90,7 +90,7 @@ class DataClassFileHandlerTest extends SapphireTest
     }
 
     /**
-     * @covers \CSoellinger\SilverStripe\ModelAnnotation\Handler\DataClassFileHandler::getNamespaceAst
+     * @covers \CSoellinger\SilverStripe\ModelAnnotations\Handler\DataClassFileHandler::getNamespaceAst
      */
     public function testGetNamespaceAstFromNoNamespaceFile(): void
     {
@@ -111,7 +111,7 @@ class DataClassFileHandlerTest extends SapphireTest
     }
 
     /**
-     * @covers \CSoellinger\SilverStripe\ModelAnnotation\Handler\DataClassFileHandler::getClassAst
+     * @covers \CSoellinger\SilverStripe\ModelAnnotations\Handler\DataClassFileHandler::getClassAst
      */
     public function testGetClassAst(): void
     {
@@ -119,7 +119,7 @@ class DataClassFileHandlerTest extends SapphireTest
     }
 
     /**
-     * @covers \CSoellinger\SilverStripe\ModelAnnotation\Handler\DataClassFileHandler::getUseStatementsFromAst
+     * @covers \CSoellinger\SilverStripe\ModelAnnotations\Handler\DataClassFileHandler::getUseStatementsFromAst
      */
     public function testGetUseStatementsFromAst(): void
     {
@@ -139,7 +139,7 @@ class DataClassFileHandlerTest extends SapphireTest
     }
 
     /**
-     * @covers \CSoellinger\SilverStripe\ModelAnnotation\Handler\DataClassFileHandler::addText
+     * @covers \CSoellinger\SilverStripe\ModelAnnotations\Handler\DataClassFileHandler::addText
      */
     public function testAddText(): void
     {
@@ -155,7 +155,7 @@ class DataClassFileHandlerTest extends SapphireTest
     }
 
     /**
-     * @covers \CSoellinger\SilverStripe\ModelAnnotation\Handler\DataClassFileHandler::addText
+     * @covers \CSoellinger\SilverStripe\ModelAnnotations\Handler\DataClassFileHandler::addText
      */
     public function testAddTextAtLineZero(): void
     {
@@ -171,7 +171,7 @@ class DataClassFileHandlerTest extends SapphireTest
     }
 
     /**
-     * @covers \CSoellinger\SilverStripe\ModelAnnotation\Handler\DataClassFileHandler::contentReplace
+     * @covers \CSoellinger\SilverStripe\ModelAnnotations\Handler\DataClassFileHandler::contentReplace
      */
     public function testContentReplace(): void
     {
@@ -187,7 +187,7 @@ class DataClassFileHandlerTest extends SapphireTest
     }
 
     /**
-     * @covers \CSoellinger\SilverStripe\ModelAnnotation\Handler\DataClassFileHandler::write
+     * @covers \CSoellinger\SilverStripe\ModelAnnotations\Handler\DataClassFileHandler::write
      */
     public function testWriteFile(): void
     {
@@ -196,7 +196,7 @@ class DataClassFileHandlerTest extends SapphireTest
     }
 
     /**
-     * @covers \CSoellinger\SilverStripe\ModelAnnotation\Handler\DataClassFileHandler::write
+     * @covers \CSoellinger\SilverStripe\ModelAnnotations\Handler\DataClassFileHandler::write
      */
     public function testWriteFileWithBackupFile(): void
     {

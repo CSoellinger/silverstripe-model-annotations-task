@@ -1,14 +1,14 @@
 <?php
 
-namespace CSoellinger\SilverStripe\ModelAnnotation\Test\Unit\View;
+namespace CSoellinger\SilverStripe\ModelAnnotations\Test\Unit\View;
 
 // phpcs:disable
 require_once __DIR__ . '/../../mockup.php';
 // phpcs:enable
 
-use CSoellinger\SilverStripe\ModelAnnotation\Test\PhpUnitHelper;
-use CSoellinger\SilverStripe\ModelAnnotation\Util\Util;
-use CSoellinger\SilverStripe\ModelAnnotation\View\DataClassTaskView;
+use CSoellinger\SilverStripe\ModelAnnotations\Test\PhpUnitHelper;
+use CSoellinger\SilverStripe\ModelAnnotations\Util\Util;
+use CSoellinger\SilverStripe\ModelAnnotations\View\DataClassTaskView;
 use Reflection;
 use SilverStripe\Core\Environment;
 use SilverStripe\Core\Injector\Injector;
@@ -18,7 +18,7 @@ use SilverStripe\ORM\DataObject;
 /**
  * @internal
  *
- * @covers \CSoellinger\SilverStripe\ModelAnnotation\View\DataClassTaskView
+ * @covers \CSoellinger\SilverStripe\ModelAnnotations\View\DataClassTaskView
  */
 class DataClassTaskViewTest extends SapphireTest
 {
@@ -44,7 +44,7 @@ class DataClassTaskViewTest extends SapphireTest
     }
 
     /**
-     * @covers \CSoellinger\SilverStripe\ModelAnnotation\View\DataClassTaskView::renderHeader
+     * @covers \CSoellinger\SilverStripe\ModelAnnotations\View\DataClassTaskView::renderHeader
      */
     public function testRenderHeader(): void
     {
@@ -57,7 +57,7 @@ class DataClassTaskViewTest extends SapphireTest
     }
 
     /**
-     * @covers \CSoellinger\SilverStripe\ModelAnnotation\View\DataClassTaskView::renderHeader
+     * @covers \CSoellinger\SilverStripe\ModelAnnotations\View\DataClassTaskView::renderHeader
      */
     public function testRenderHeaderHtml(): void
     {
@@ -73,7 +73,7 @@ class DataClassTaskViewTest extends SapphireTest
     }
 
     /**
-     * @covers \CSoellinger\SilverStripe\ModelAnnotation\View\DataClassTaskView::renderMessage
+     * @covers \CSoellinger\SilverStripe\ModelAnnotations\View\DataClassTaskView::renderMessage
      */
     public function testRenderMessage(): void
     {
@@ -85,7 +85,7 @@ class DataClassTaskViewTest extends SapphireTest
     }
 
     /**
-     * @covers \CSoellinger\SilverStripe\ModelAnnotation\View\DataClassTaskView::renderMessage
+     * @covers \CSoellinger\SilverStripe\ModelAnnotations\View\DataClassTaskView::renderMessage
      */
     public function testRenderMessageHtml(): void
     {
@@ -103,7 +103,7 @@ class DataClassTaskViewTest extends SapphireTest
     }
 
     /**
-     * @covers \CSoellinger\SilverStripe\ModelAnnotation\View\DataClassTaskView::renderSource
+     * @covers \CSoellinger\SilverStripe\ModelAnnotations\View\DataClassTaskView::renderSource
      */
     public function testRenderSource(): void
     {
@@ -115,7 +115,7 @@ class DataClassTaskViewTest extends SapphireTest
     }
 
     /**
-     * @covers \CSoellinger\SilverStripe\ModelAnnotation\View\DataClassTaskView::renderSource
+     * @covers \CSoellinger\SilverStripe\ModelAnnotations\View\DataClassTaskView::renderSource
      */
     public function testRenderSourceHtml(): void
     {
@@ -132,7 +132,7 @@ class DataClassTaskViewTest extends SapphireTest
     }
 
     /**
-     * @covers \CSoellinger\SilverStripe\ModelAnnotation\View\DataClassTaskView::renderHr
+     * @covers \CSoellinger\SilverStripe\ModelAnnotations\View\DataClassTaskView::renderHr
      */
     public function testRenderHr(): void
     {
@@ -144,7 +144,7 @@ class DataClassTaskViewTest extends SapphireTest
     }
 
     /**
-     * @covers \CSoellinger\SilverStripe\ModelAnnotation\View\DataClassTaskView::renderHr
+     * @covers \CSoellinger\SilverStripe\ModelAnnotations\View\DataClassTaskView::renderHr
      */
     public function testRenderHrHtml(): void
     {

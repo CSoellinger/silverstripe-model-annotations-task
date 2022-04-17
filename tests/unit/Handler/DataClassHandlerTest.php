@@ -1,11 +1,11 @@
 <?php
 
-namespace CSoellinger\SilverStripe\ModelAnnotation\Test\Unit\Handler;
+namespace CSoellinger\SilverStripe\ModelAnnotations\Test\Unit\Handler;
 
-use CSoellinger\SilverStripe\ModelAnnotation\Handler\DataClassFileHandler;
-use CSoellinger\SilverStripe\ModelAnnotation\Handler\DataClassHandler;
-use CSoellinger\SilverStripe\ModelAnnotation\Task\ModelAnnotationsTask;
-use CSoellinger\SilverStripe\ModelAnnotation\View\DataClassTaskView;
+use CSoellinger\SilverStripe\ModelAnnotations\Handler\DataClassFileHandler;
+use CSoellinger\SilverStripe\ModelAnnotations\Handler\DataClassHandler;
+use CSoellinger\SilverStripe\ModelAnnotations\Task\ModelAnnotationsTask;
+use CSoellinger\SilverStripe\ModelAnnotations\View\DataClassTaskView;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Core\Injector\Injector;
 use SilverStripe\Dev\SapphireTest;
@@ -13,7 +13,7 @@ use SilverStripe\Dev\SapphireTest;
 /**
  * @internal
  *
- * @covers \CSoellinger\SilverStripe\ModelAnnotation\Handler\DataClassHandler
+ * @covers \CSoellinger\SilverStripe\ModelAnnotations\Handler\DataClassHandler
  */
 class DataClassFileTest extends SapphireTest
 {
@@ -25,14 +25,14 @@ class DataClassFileTest extends SapphireTest
 
         /** @var DataClassHandler $handler */
         $handler = Injector::inst()
-            ->createWithArgs(DataClassHandler::class, ['CSoellinger\SilverStripe\ModelAnnotation\Test\Unit\Team'])
+            ->createWithArgs(DataClassHandler::class, ['CSoellinger\SilverStripe\ModelAnnotations\Test\Unit\Team'])
         ;
 
         self::$handler = $handler;
     }
 
     /**
-     * @covers \CSoellinger\SilverStripe\ModelAnnotation\Handler\DataClassHandler::__construct
+     * @covers \CSoellinger\SilverStripe\ModelAnnotations\Handler\DataClassHandler::__construct
      * @dataProvider provideFqnArray
      */
     public function testInitialize(string $fqn): void
@@ -43,7 +43,7 @@ class DataClassFileTest extends SapphireTest
     }
 
     /**
-     * @covers \CSoellinger\SilverStripe\ModelAnnotation\Handler\DataClassHandler::getMissingUseStatements
+     * @covers \CSoellinger\SilverStripe\ModelAnnotations\Handler\DataClassHandler::getMissingUseStatements
      */
     public function testGetMissingUseStatements(): void
     {
@@ -55,7 +55,7 @@ class DataClassFileTest extends SapphireTest
 
         /** @var DataClassHandler $handler */
         $handler = Injector::inst()
-            ->createWithArgs(DataClassHandler::class, ['CSoellinger\SilverStripe\ModelAnnotation\Test\Unit\Team'])
+            ->createWithArgs(DataClassHandler::class, ['CSoellinger\SilverStripe\ModelAnnotations\Test\Unit\Team'])
         ;
 
         self::$handler = $handler;
@@ -70,7 +70,7 @@ class DataClassFileTest extends SapphireTest
     }
 
     /**
-     * @covers \CSoellinger\SilverStripe\ModelAnnotation\Handler\DataClassHandler::getFile
+     * @covers \CSoellinger\SilverStripe\ModelAnnotations\Handler\DataClassHandler::getFile
      */
     public function testGetFile(): void
     {
@@ -78,7 +78,7 @@ class DataClassFileTest extends SapphireTest
     }
 
     /**
-     * @covers \CSoellinger\SilverStripe\ModelAnnotation\Handler\DataClassHandler::getAst
+     * @covers \CSoellinger\SilverStripe\ModelAnnotations\Handler\DataClassHandler::getAst
      */
     public function testGetAst(): void
     {
@@ -88,7 +88,7 @@ class DataClassFileTest extends SapphireTest
     }
 
     /**
-     * @covers \CSoellinger\SilverStripe\ModelAnnotation\Handler\DataClassHandler::getModelProperties
+     * @covers \CSoellinger\SilverStripe\ModelAnnotations\Handler\DataClassHandler::getModelProperties
      */
     public function testGetModelProperties(): void
     {
@@ -96,7 +96,7 @@ class DataClassFileTest extends SapphireTest
     }
 
     /**
-     * @covers \CSoellinger\SilverStripe\ModelAnnotation\Handler\DataClassHandler::getModelMethods
+     * @covers \CSoellinger\SilverStripe\ModelAnnotations\Handler\DataClassHandler::getModelMethods
      */
     public function testGetModelMethods(): void
     {
@@ -104,7 +104,7 @@ class DataClassFileTest extends SapphireTest
     }
 
     /**
-     * @covers \CSoellinger\SilverStripe\ModelAnnotation\Handler\DataClassHandler::getRenderer
+     * @covers \CSoellinger\SilverStripe\ModelAnnotations\Handler\DataClassHandler::getRenderer
      */
     public function testGetRenderer(): void
     {
@@ -112,7 +112,7 @@ class DataClassFileTest extends SapphireTest
     }
 
     /**
-     * @covers \CSoellinger\SilverStripe\ModelAnnotation\Handler\DataClassHandler::getClassPhpDoc
+     * @covers \CSoellinger\SilverStripe\ModelAnnotations\Handler\DataClassHandler::getClassPhpDoc
      */
     public function testGetClassPhpDoc(): void
     {
@@ -126,7 +126,7 @@ class DataClassFileTest extends SapphireTest
     }
 
     /**
-     * @covers \CSoellinger\SilverStripe\ModelAnnotation\Handler\DataClassHandler::generateClassPhpDoc
+     * @covers \CSoellinger\SilverStripe\ModelAnnotations\Handler\DataClassHandler::generateClassPhpDoc
      * @dataProvider provideFqnArray
      *
      * @param mixed $fqn
@@ -148,7 +148,7 @@ class DataClassFileTest extends SapphireTest
     {
         return [
             [
-                'CSoellinger\SilverStripe\ModelAnnotation\Test\Unit\Player',
+                'CSoellinger\SilverStripe\ModelAnnotations\Test\Unit\Player',
                 implode(PHP_EOL, [
                     '/**',
                     ' * @internal Testing model',
@@ -161,7 +161,7 @@ class DataClassFileTest extends SapphireTest
                 ]),
             ],
             [
-                'CSoellinger\SilverStripe\ModelAnnotation\Test\Unit\Supporter',
+                'CSoellinger\SilverStripe\ModelAnnotations\Test\Unit\Supporter',
                 implode(PHP_EOL, [
                     '/**',
                     ' * @internal Testing model',
@@ -172,7 +172,7 @@ class DataClassFileTest extends SapphireTest
                 ]),
             ],
             [
-                'CSoellinger\SilverStripe\ModelAnnotation\Test\Unit\Team',
+                'CSoellinger\SilverStripe\ModelAnnotations\Test\Unit\Team',
                 implode(PHP_EOL, [
                     '/**',
                     ' * @property string $Name   Name ...',
@@ -185,7 +185,7 @@ class DataClassFileTest extends SapphireTest
                 ]),
             ],
             [
-                'CSoellinger\SilverStripe\ModelAnnotation\Test\Unit\TeamSupporter',
+                'CSoellinger\SilverStripe\ModelAnnotations\Test\Unit\TeamSupporter',
                 implode(PHP_EOL, [
                     '/**',
                     ' * @property int       $Ranking     Ranking ...',

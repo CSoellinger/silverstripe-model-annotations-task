@@ -1,8 +1,8 @@
 <?php
 
-namespace CSoellinger\SilverStripe\ModelAnnotation\Test\Unit\Util;
+namespace CSoellinger\SilverStripe\ModelAnnotations\Test\Unit\Util;
 
-use CSoellinger\SilverStripe\ModelAnnotation\Util\Util;
+use CSoellinger\SilverStripe\ModelAnnotations\Util\Util;
 use Reflection;
 use SilverStripe\Core\Injector\Injector;
 use SilverStripe\Dev\SapphireTest;
@@ -11,7 +11,7 @@ use SilverStripe\ORM\DataObject;
 /**
  * @internal
  *
- * @covers \CSoellinger\SilverStripe\ModelAnnotation\Util\Util
+ * @covers \CSoellinger\SilverStripe\ModelAnnotations\Util\Util
  */
 class UtilTest extends SapphireTest
 {
@@ -28,7 +28,7 @@ class UtilTest extends SapphireTest
     }
 
     /**
-     * @covers \CSoellinger\SilverStripe\ModelAnnotation\Util\Util::strStartsWith
+     * @covers \CSoellinger\SilverStripe\ModelAnnotations\Util\Util::strStartsWith
      */
     public function testStrStartsWith(): void
     {
@@ -37,7 +37,7 @@ class UtilTest extends SapphireTest
     }
 
     /**
-     * @covers \CSoellinger\SilverStripe\ModelAnnotation\Util\Util::silverStripeToPhpType
+     * @covers \CSoellinger\SilverStripe\ModelAnnotations\Util\Util::silverStripeToPhpType
      */
     public function testSilverStripeToPhpType(): void
     {
@@ -47,7 +47,7 @@ class UtilTest extends SapphireTest
     }
 
     /**
-     * @covers \CSoellinger\SilverStripe\ModelAnnotation\Util\Util::fileByFqn
+     * @covers \CSoellinger\SilverStripe\ModelAnnotations\Util\Util::fileByFqn
      */
     public function testFileByFqn(): void
     {
@@ -57,7 +57,7 @@ class UtilTest extends SapphireTest
     }
 
     /**
-     * @covers \CSoellinger\SilverStripe\ModelAnnotation\Util\Util::fileByFqn
+     * @covers \CSoellinger\SilverStripe\ModelAnnotations\Util\Util::fileByFqn
      */
     public function testFileByFqnFunction(): void
     {
@@ -67,7 +67,7 @@ class UtilTest extends SapphireTest
     }
 
     /**
-     * @covers \CSoellinger\SilverStripe\ModelAnnotation\Util\Util::fileByFqn
+     * @covers \CSoellinger\SilverStripe\ModelAnnotations\Util\Util::fileByFqn
      */
     public function testFileByFqnUnknown(): void
     {
@@ -75,18 +75,18 @@ class UtilTest extends SapphireTest
     }
 
     /**
-     * @covers \CSoellinger\SilverStripe\ModelAnnotation\Util\Util::getNamespaceFromFqn
+     * @covers \CSoellinger\SilverStripe\ModelAnnotations\Util\Util::getNamespaceFromFqn
      */
     public function testGetNamespaceFromFqn(): void
     {
         $namespace = self::$util->getNamespaceFromFqn(self::class);
 
-        self::assertEquals('CSoellinger\SilverStripe\ModelAnnotation\Test\Unit\Util', $namespace);
+        self::assertEquals('CSoellinger\SilverStripe\ModelAnnotations\Test\Unit\Util', $namespace);
         self::assertEquals('\\', self::$util->getNamespaceFromFqn(Reflection::class));
     }
 
     /**
-     * @covers \CSoellinger\SilverStripe\ModelAnnotation\Util\Util::getClassesFromNamespace
+     * @covers \CSoellinger\SilverStripe\ModelAnnotations\Util\Util::getClassesFromNamespace
      */
     public function testGetClassesFromNamespace(): void
     {

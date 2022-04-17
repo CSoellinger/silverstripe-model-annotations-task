@@ -51,12 +51,12 @@
     "prefer-stable": true,
     "autoload": {
         "psr-4": {
-            "CSoellinger\\SilverStripe\\ModelAnnotation\\": "src/"
+            "CSoellinger\\SilverStripe\\ModelAnnotations\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "CSoellinger\\SilverStripe\\ModelAnnotation\\Test\\": "tests/"
+            "CSoellinger\\SilverStripe\\ModelAnnotations\\Test\\": "tests/"
         }
     },
     "config": {

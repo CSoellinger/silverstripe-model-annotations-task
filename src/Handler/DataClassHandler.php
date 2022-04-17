@@ -1,10 +1,10 @@
 <?php
 
-namespace CSoellinger\SilverStripe\ModelAnnotation\Handler;
+namespace CSoellinger\SilverStripe\ModelAnnotations\Handler;
 
-use CSoellinger\SilverStripe\ModelAnnotation\Task\ModelAnnotationsTask;
-use CSoellinger\SilverStripe\ModelAnnotation\Util\Util;
-use CSoellinger\SilverStripe\ModelAnnotation\View\DataClassTaskView;
+use CSoellinger\SilverStripe\ModelAnnotations\Task\ModelAnnotationsTask;
+use CSoellinger\SilverStripe\ModelAnnotations\Util\Util;
+use CSoellinger\SilverStripe\ModelAnnotations\View\DataClassTaskView;
 use SilverStripe\Core\ClassInfo;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Core\Injector\Injectable;
