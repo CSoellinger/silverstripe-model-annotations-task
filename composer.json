@@ -70,7 +70,8 @@
             "ramsey/composer-repl": true,
             "ramsey/devtools": true,
             "silverstripe/vendor-plugin": true,
-            "composer/package-versions-deprecated": true
+            "composer/package-versions-deprecated": true,
+            "silverstripe/recipe-plugin": true
         },
         "sort-packages": true
     },
