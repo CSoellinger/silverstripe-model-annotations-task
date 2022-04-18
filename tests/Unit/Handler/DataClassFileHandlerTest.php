@@ -201,8 +201,6 @@ class DataClassFileHandlerTest extends SapphireTest
      */
     public function testWriteFileWithBackupFile(): void
     {
-        $oldVal = (bool) Config::forClass(ModelAnnotationsTask::class)->get('createBackupFile');
-
         Config::forClass(ModelAnnotationsTask::class)->set('createBackupFile', true);
 
         self::$fileHandler->write();
