@@ -3,6 +3,9 @@ inherit: true
 build:
   nodes:
     analysis:
+      dependencies:
+        before:
+          - sudo apt-get install -y php-ast
       tests:
         override: [php-scrutinizer-run]
 
