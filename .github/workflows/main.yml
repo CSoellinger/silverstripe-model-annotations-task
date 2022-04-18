@@ -56,20 +56,23 @@ jobs:
       - name: Validate composer
         run: composer validate
 
-      - name: Version composer
-        run: composer --version
-
       - name: Install SilverStripe
-        run: composer require --no-update silverstripe/recipe-core:${{ matrix.versions.silverstripe }}
+        run: composer require silverstripe/framework:${{ matrix.versions.silverstripe }}
 
       - name: Install Requirements
-        run: composer install --no-interaction --no-progress --optimize-autoloader --verbose --profile
+        run: composer install
+
+      # - name: Install SilverStripe
+      #   run: composer require --no-update silverstripe/recipe-core:${{ matrix.versions.silverstripe }}
+
+      # - name: Install Requirements
+      #   run: composer install --no-interaction --no-progress --optimize-autoloader --verbose --profile
 
       - name: Run Migration
         run: ./vendor/bin/sake dev/build "flush=all"
 
-      # - name: Run lint
-      #   run: composer lint:all
+      - name: Run lint
+        run: composer lint:all
 
       - name: Run analyze
         run: composer analyze:all
