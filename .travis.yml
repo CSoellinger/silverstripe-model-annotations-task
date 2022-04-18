@@ -13,7 +13,7 @@ before_script:
   - pecl install ast
 
   - composer validate
-  - composer require --no-update silverstripe/recipe-cms:"$RECIPE_VERSION"
+  - composer require --no-update silverstripe/framework:"$RECIPE_VERSION"
   - composer install --prefer-source --no-interaction --no-progress --no-suggest --optimize-autoloader --verbose --profile
 
 script:
