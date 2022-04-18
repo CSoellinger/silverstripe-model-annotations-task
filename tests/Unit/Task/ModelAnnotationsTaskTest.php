@@ -23,6 +23,8 @@ use SilverStripe\Dev\SapphireTest;
  */
 class ModelAnnotationsTaskTest extends SapphireTest
 {
+    protected $usesDatabase = false;
+
     protected static ModelAnnotationsTask $task;
 
     public static function setUpBeforeClass(): void

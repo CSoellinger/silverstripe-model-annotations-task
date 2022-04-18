@@ -22,6 +22,8 @@ use SilverStripe\ORM\DataObject;
  */
 class DataClassTaskViewTest extends SapphireTest
 {
+    protected $usesDatabase = false;
+
     protected static DataClassTaskView $view;
 
     public static string $phpSapiName = 'cli';

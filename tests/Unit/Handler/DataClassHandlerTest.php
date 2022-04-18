@@ -17,6 +17,8 @@ use SilverStripe\Dev\SapphireTest;
  */
 class DataClassHandlerTest extends SapphireTest
 {
+    protected $usesDatabase = false;
+
     protected static DataClassHandler $handler;
 
     protected function setUp(): void

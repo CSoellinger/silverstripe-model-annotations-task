@@ -19,6 +19,8 @@ use SilverStripe\ORM\DataObject;
  */
 class DataClassFileHandlerTest extends SapphireTest
 {
+    protected $usesDatabase = false;
+
     protected static DataClassFileHandler $fileHandler;
 
     // public static function setUpBeforeClass(): void

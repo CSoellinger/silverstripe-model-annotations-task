@@ -15,6 +15,8 @@ use SilverStripe\ORM\DataObject;
  */
 class UtilTest extends SapphireTest
 {
+    protected $usesDatabase = false;
+
     protected static Util $util;
 
     public static function setUpBeforeClass(): void
