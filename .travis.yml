@@ -3,9 +3,9 @@ language: php
 matrix:
   include:
     - php: 7.4
-      env: RECIPE_VERSION=4.10-dev PHPUNIT_COVERAGE_TEST=1 PHPUNIT_TEST_ALL=1
+      env: RECIPE_VERSION=4.10.x-dev PHPUNIT_COVERAGE_TEST=1 PHPUNIT_TEST_ALL=1
     - php: 8.0
-      env: RECIPE_VERSION=4.10-dev PHPUNIT_TEST_ALL=1
+      env: RECIPE_VERSION=4.10.x-dev PHPUNIT_TEST_ALL=1
 
 before_script:
   - phpenv rehash
