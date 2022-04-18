@@ -38,7 +38,7 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.versions.php }}
-          tools: composer:v2.2.4
+          tools: composer:v2.2.12
           extensions: ${{ env.php_extensions }}
           coverage: none
 
