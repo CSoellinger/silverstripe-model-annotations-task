@@ -3,9 +3,10 @@ inherit: true
 build:
   nodes:
     analysis:
-      dependencies:
-        before:
-          - sudo apt-get install -y php-ast
+      environment:
+        php:
+          pecl_extensions:
+            - ast
       tests:
         override: [php-scrutinizer-run]
 
