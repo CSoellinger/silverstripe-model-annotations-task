@@ -1,11 +1,25 @@
 language: php
 
+env:
+  - SS_ENVIRONMENT_TYPE=dev
+  - SS_DATABASE_CLASS=SQLite3Database
+  - SS_DATABASE_NAME=xxx
+  - SS_DATABASE_USERNAME=xxx
+  - SS_DATABASE_PASSWORD=xxx
+  - SS_DEFAULT_ADMIN_USERNAME=admin
+  - SS_DEFAULT_ADMIN_PASSWORD=admin
+
 matrix:
   include:
     - php: 7.4
-      env: RECIPE_VERSION=4.10.x-dev PHPUNIT_COVERAGE_TEST=1 PHPUNIT_TEST_ALL=1
+      env:
+        - RECIPE_VERSION=4.10.x-dev
+        - PHPUNIT_COVERAGE_TEST=1
+        - PHPUNIT_TEST_ALL=1
     - php: 8.0
-      env: RECIPE_VERSION=4.10.x-dev PHPUNIT_TEST_ALL=1
+      env:
+        - RECIPE_VERSION=4.10.x-dev
+        - PHPUNIT_TEST_ALL=1
 
 before_script:
   - phpenv rehash
