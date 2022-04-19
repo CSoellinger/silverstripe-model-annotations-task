@@ -17,14 +17,6 @@ class Util
     use Injectable;
 
     /**
-     * Little helper for php7 support.
-     */
-    public function strStartsWith(string $haystack, string $needle): bool
-    {
-        return substr($haystack, 0, strlen($needle)) === $needle;
-    }
-
-    /**
      * Transform silver stripe db type to a php type.
      */
     public function silverStripeToPhpType(string $dataType): string
@@ -65,7 +57,9 @@ class Util
      */
     public function getNamespaceFromFqn(string $fqn): string
     {
-        if ($pos = strrpos($fqn, '\\')) {
+        $pos = strrpos($fqn, '\\');
+
+        if ($pos !== false) {
             return substr($fqn, 0, $pos);
         }
 

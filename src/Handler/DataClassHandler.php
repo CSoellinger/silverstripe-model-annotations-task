@@ -5,6 +5,7 @@ namespace CSoellinger\SilverStripe\ModelAnnotations\Handler;
 use CSoellinger\SilverStripe\ModelAnnotations\Task\ModelAnnotationsTask;
 use CSoellinger\SilverStripe\ModelAnnotations\Util\Util;
 use CSoellinger\SilverStripe\ModelAnnotations\View\DataClassTaskView;
+use Psl\Regex;
 use SilverStripe\Core\ClassInfo;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Core\Injector\Injectable;
@@ -71,11 +72,6 @@ class DataClassHandler
     private Util $util;
 
     /**
-     * @var dataObject - Data object class instance to get the configs
-     */
-    private DataObject $class;
-
-    /**
      * @var string[] - All classes in same namespace
      */
     private array $classesInSameNamespace = [];
@@ -96,11 +92,6 @@ class DataClassHandler
         /** @var DataClassFileHandler $fileHandler */
         $fileHandler = Injector::inst()->createWithArgs(DataClassFileHandler::class, [$this->util->fileByFqn($fqn)]);
         $this->file = $fileHandler;
-
-        // Inject a class instance
-        /** @var DataObject $class */
-        $class = Injector::inst()->get($fqn);
-        $this->class = $class;
 
         $this->ast = $this->file->getClassAst($fqn);
 
@@ -149,7 +140,7 @@ class DataClassHandler
      */
     public function getClassPhpDoc(): string
     {
-        if (!$this->ast) {
+        if ($this->ast === null) {
             return '';
         }
 
@@ -238,7 +229,7 @@ class DataClassHandler
             return '/**' . PHP_EOL . $classDocAdd;
         }
 
-        return preg_replace('/\*\/$/m', '*' . PHP_EOL, $oldClassDoc) . $classDocAdd;
+        return Regex\replace($oldClassDoc, '/\*\/$/m', '*' . PHP_EOL) . $classDocAdd;
     }
 
     /**
@@ -263,7 +254,7 @@ class DataClassHandler
     {
         foreach (['db', 'has_one', 'belongs_to'] as $configKey) {
             /** @var array<string,string> $fieldConfigs */
-            $fieldConfigs = $this->class->config()->get($configKey);
+            $fieldConfigs = Config::forClass($this->fqn)->get($configKey);
 
             foreach ($fieldConfigs as $fieldName => $fieldType) {
                 if ($this->checkField($fieldName) === true) {
@@ -327,7 +318,7 @@ class DataClassHandler
 
         foreach ($relations as $key => $relation) {
             /** @var array<string,array<string,string>|string> $fieldConfigs */
-            $fieldConfigs = $this->class->config()->get($key);
+            $fieldConfigs = Config::forClass($this->fqn)->get($key);
 
             foreach ($fieldConfigs as $fieldName => $fieldType) {
                 if ($this->checkField($fieldName) === true) {
@@ -374,11 +365,11 @@ class DataClassHandler
         $siteTreeFields = (array) $config->get('siteTreeFields');
         $ignoreFields = (array) $config->get('ignoreFields');
         $dataClasses = ClassInfo::dataClassesFor($this->fqn);
-        $isSiteTree = in_array('silverstripe\\cms\\model\\sitetree', array_keys($dataClasses));
+        $isSiteTree = in_array('silverstripe\\cms\\model\\sitetree', array_keys($dataClasses), true);
+        $isSiteTreeField = in_array($fieldName, $siteTreeFields, true);
+        $ignoreField = in_array($fieldName, $ignoreFields, true);
 
-        if (($isSiteTree === true && in_array($fieldName, $siteTreeFields) === true)
-            || in_array($fieldName, $ignoreFields) === true
-        ) {
+        if (($isSiteTree === true && $isSiteTreeField === true) || $ignoreField === true) {
             return true;
         }
 
@@ -391,8 +382,10 @@ class DataClassHandler
      */
     private function shortenDataType(string $dataType): string
     {
+        $pos = strpos($dataType, '.');
+
         // If we have a dot notation we will strip it cause we just need the class name
-        if ($pos = strpos($dataType, '.')) {
+        if ($pos !== false) {
             $dataType = substr($dataType, 0, $pos);
         }
 
@@ -411,7 +404,7 @@ class DataClassHandler
         $useStatementExists = (count($useStatement) > 0);
 
         // Also check if field type is in same namespace
-        $inSameNamespace = in_array($dataType, $this->classesInSameNamespace);
+        $inSameNamespace = in_array($dataType, $this->classesInSameNamespace, true);
 
         // By default we take the type from the global namespace
         $dataType = '\\' . $dataType;

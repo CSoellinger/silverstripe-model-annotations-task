@@ -7,6 +7,7 @@ use Exception;
 use SilverStripe\Core\ClassInfo;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Core\Injector\Injectable;
+use Psl\Filesystem as File;
 
 /**
  * Manages the file from the data class. Saving path, content and some other
@@ -37,12 +38,12 @@ class DataClassFileHandler
     public function __construct(string $path)
     {
         // If we did not get a valid file we are throwing an exception
-        if (!$path || file_exists($path) === false) {
-            throw new Exception('Found no file at path "' . $path . '"', 1);
+        if ($path === '' || File\exists($path) === false || File\is_file($path) === false) {
+            throw new Exception('Error with file at path "' . $path . '"', 1);
         }
 
         $this->path = $path;
-        $this->content = (string) file_get_contents($path);
+        $this->content = File\read_file($path);
         $this->ast = \ast\parse_code($this->content, 80);
     }
 
@@ -144,10 +145,10 @@ class DataClassFileHandler
                 ++$cnt;
             }
 
-            copy($this->path, $backupFile);
+            File\copy($this->path, $backupFile, false);
         }
 
-        file_put_contents($this->path, $this->content);
+        File\write_file($this->path, $this->content);
 
         return $this;
     }
@@ -168,7 +169,7 @@ class DataClassFileHandler
             foreach ($ast->children as $child) {
                 $childAst = $this->searchNamespaceAst($child);
 
-                if ($childAst) {
+                if ($childAst !== null) {
                     return $childAst;
                 }
             }
@@ -199,7 +200,7 @@ class DataClassFileHandler
             foreach ($ast->children as $child) {
                 $childAst = $this->searchClassAst($child, $className);
 
-                if ($childAst) {
+                if ($childAst !== null) {
                     return $childAst;
                 }
             }

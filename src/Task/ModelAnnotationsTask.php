@@ -21,6 +21,7 @@ use SilverStripe\Dev\CliDebugView;
 use SilverStripe\Dev\DebugView;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\Security\Permission;
+use Psl\Str;
 
 /**
  * This task generates annotations for your silver stripe model. This is mostly
@@ -149,6 +150,8 @@ class ModelAnnotationsTask extends BuildTask
 
     public function __construct()
     {
+        parent::__construct();
+
         if (Director::is_cli() === true) {
             /** @var CliDebugView $renderer */
             $renderer = Injector::inst()->get(CliDebugView::class);
@@ -219,7 +222,7 @@ class ModelAnnotationsTask extends BuildTask
         $dataClass = strtolower($dataClass);
         $dataClasses = $this->getDataClasses();
 
-        if ($dataClass) {
+        if ($dataClass !== '') {
             if (isset($dataClasses[$dataClass]) === false) {
                 $this->printError('Data class "' . $dataClass . '" does not exist');
             }
@@ -232,7 +235,8 @@ class ModelAnnotationsTask extends BuildTask
                 /** @var DataClassHandler $dataClassHandler */
                 $dataClassHandler = Injector::inst()->createWithArgs(DataClassHandler::class, [$fqn]);
                 $dataClassAst = $dataClassHandler->getAst();
-                if (!$dataClassAst) {
+
+                if ($dataClassAst === null) {
                     continue;
                 }
 
@@ -251,12 +255,16 @@ class ModelAnnotationsTask extends BuildTask
 
                     if (count($useStatements) > 0) {
                         $lastUse = end($useStatements);
-                        $atLine = ((int) $lastUse->lineno) + 1;
+                        /** @var int $lineno */
+                        $lineno = $lastUse->lineno;
+                        $atLine = $lineno + 1;
                     } else {
                         $namespaceAst = $dataClassHandler->getFile()->getNamespaceAst();
 
-                        if ($namespaceAst) {
-                            $atLine = ((int) $namespaceAst->lineno) + 1;
+                        if ($namespaceAst !== null) {
+                            /** @var int $lineno */
+                            $lineno = $namespaceAst->lineno;
+                            $atLine = $lineno + 1;
                         }
                     }
 
@@ -274,7 +282,9 @@ class ModelAnnotationsTask extends BuildTask
                     $newPhpDoc = $dataClassHandler->generateClassPhpDoc();
 
                     if ($oldPhpDoc === '') {
-                        $atLine = ((int) $dataClassAst->lineno) + count($missingUseStatements);
+                        /** @var int $lineno */
+                        $lineno = $dataClassAst->lineno;
+                        $atLine = $lineno + count($missingUseStatements);
 
                         $dataClassHandler
                             ->getFile()
@@ -368,10 +378,10 @@ class ModelAnnotationsTask extends BuildTask
      */
     public function getConfigVarValue(string $key): bool
     {
-        $value = (bool) ($this->request->getVar($key) ?? $this->config()->get($key));
+        $value = (bool) ($this->request->getVar($key) ?? self::config()->get($key));
 
-        if ($value !== (bool) $this->config()->get($key)) {
-            $this->config()->set($key, $value);
+        if ($value !== (bool) self::config()->get($key)) {
+            self::config()->set($key, $value);
         }
 
         return $value;
@@ -391,9 +401,11 @@ class ModelAnnotationsTask extends BuildTask
         // Exclude all classes from vendor
         return array_filter($dataClasses, function (string $dataClass) {
             $file = $this->util->fileByFqn($dataClass);
-            $vendorPath = ((string) BASE_PATH) . DIRECTORY_SEPARATOR . 'vendor';
+            /** @var string $basePath */
+            $basePath = BASE_PATH;
+            $vendorPath = $basePath . DIRECTORY_SEPARATOR . 'vendor';
 
-            return $this->util->strStartsWith($file, $vendorPath) === false;
+            return Str\starts_with($file, $vendorPath) === false;
         });
     }
 
