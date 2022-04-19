@@ -38,7 +38,6 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.versions.php }}
-          tools: composer:v2.2.12
           extensions: ${{ env.php_extensions }}
           coverage: none
 
@@ -72,10 +71,10 @@ jobs:
         run: ./vendor/bin/sake dev/build "flush=all"
 
       - name: Run lint
-        run: composer lint:all
+        run: composer lint-all
 
       - name: Run analyze
-        run: composer analyze:all
+        run: composer analyze-all
 
       # - name: Run tests
       #   run: composer test:unit -- --exclude-group ExpectedOutput
