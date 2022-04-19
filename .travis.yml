@@ -41,4 +41,4 @@ script:
   - if [[ $PHPUNIT_COVERAGE_TEST ]]; then composer test-coverage-ci; fi
 
 after_success:
-  - if [[ $PHPUNIT_COVERAGE_TEST ]]; then bash <(curl -s https://codecov.io/bash) -f ./build/coverage/coverage-xml/index.xml -F php; fi
+  - if [[ $PHPUNIT_COVERAGE_TEST ]]; then curl -Os https://uploader.codecov.io/latest/linux/codecov; chmod +x codecov; ./codecov -f ./build/coverage/coverage-xml/index.xml -F php; rm codecov; fi
