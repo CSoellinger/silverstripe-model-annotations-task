@@ -11,12 +11,12 @@ env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   php_extensions: ast, ctype, dom, fileinfo, hash, intl, mbstring, session, simplexml, tokenizer, xml, gd, sqlite3, pcov, opcache, tidy, zip
   SS_DATABASE_CLASS: SQLite3Database
-  SS_DATABASE_SERVER: localhost
   SS_DATABASE_NAME: silverstripe
   SS_DATABASE_USERNAME: root
   SS_DATABASE_PASSWORD: silverstripe
   SS_DEFAULT_ADMIN_USERNAME: admin
   SS_DEFAULT_ADMIN_PASSWORD: admin
+  SS_ENVIRONMENT_TYPE: dev
 jobs:
   test:
     timeout-minutes: 15
@@ -28,8 +28,8 @@ jobs:
         versions:
           - php: '7.4'
             silverstripe: '4.10.x-dev'
-          # - php: '8.0'
-          #   silverstripe: '4.10.x-dev'
+          - php: '8.0'
+            silverstripe: '4.10.x-dev'
     steps:
       - name: checkout
         uses: actions/checkout@v2

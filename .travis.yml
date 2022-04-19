@@ -32,7 +32,6 @@ before_script:
   - pecl install ast
   - pecl install pcov
 
-  - composer self-update 2.2.12
   - composer validate
   - composer require --no-update silverstripe/framework:"$RECIPE_VERSION"
   - composer install --no-interaction --verbose --profile

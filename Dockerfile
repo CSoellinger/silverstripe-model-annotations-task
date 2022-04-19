@@ -1,5 +1,5 @@
 ARG PHP_VERSION=8.0
-FROM composer:2.2 AS composer
+FROM composer:2 AS composer
 FROM mlocati/php-extension-installer:1.5 as phpei
 FROM php:$PHP_VERSION-apache-buster
 

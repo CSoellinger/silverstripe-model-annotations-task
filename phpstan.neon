@@ -7,6 +7,10 @@ parameters:
 	excludePaths:
 		- ./vendor
 	ignoreErrors:
+		- '#^Short ternary operator is not allowed\. Use null coalesce operator if applicable or consider using long ternary\.$#'
+		- '#^Call to static method PHPUnit\\Framework\\Assert\:\:assertInstanceOf\(\) with ''CSoellinger\\\\SilverStripe\\\\ModelAnnotations\\\\Handler\\\\DataClassFileHandler'' and CSoellinger\\SilverStripe\\ModelAnnotations\\Handler\\DataClassFileHandler will always evaluate to true\.$#'
+		- '#^Call to static method PHPUnit\\Framework\\Assert\:\:assertInstanceOf\(\) with ''CSoellinger\\\\SilverStripe\\\\ModelAnnotations\\\\View\\\\DataClassTaskView'' and CSoellinger\\SilverStripe\\ModelAnnotations\\View\\DataClassTaskView will always evaluate to true\.$#'
+		- '#^Call to static method PHPUnit\\Framework\\Assert\:\:assertInstanceOf\(\) with ''CSoellinger\\\\SilverStripe\\\\ModelAnnotations\\\\Task\\\\ModelAnnotationsTask'' and CSoellinger\\SilverStripe\\ModelAnnotations\\Task\\ModelAnnotationsTask will always evaluate to true\.$#'
 		-
 			message: '#^Static property CSoellinger\\SilverStripe\\ModelAnnotations\\Task\\ModelAnnotationsTask\:\:\$siteTreeFields is never read, only written\.$#'
 			path: src/Task/ModelAnnotationsTask.php
