@@ -1,6 +1,6 @@
 {
     "name": "csoellinger/silverstripe-model-annotations-task",
-    "description": "A SilverStripe Task to generate data object model annotations for defined db fields. Also for configs from data extensions.",
+    "description": "A SilverStripe Task to generate data object model annotations for defined db fields including fields defined in extensions.",
     "license": "BSD-3-Clause",
     "type": "silverstripe-vendormodule",
     "keywords": [
