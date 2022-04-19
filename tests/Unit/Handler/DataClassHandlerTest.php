@@ -17,8 +17,6 @@ use SilverStripe\Dev\SapphireTest;
  */
 class DataClassHandlerTest extends SapphireTest
 {
-    protected $usesDatabase = false;
-
     protected static DataClassHandler $handler;
 
     protected function setUp(): void
@@ -37,11 +35,12 @@ class DataClassHandlerTest extends SapphireTest
      * @covers \CSoellinger\SilverStripe\ModelAnnotations\Handler\DataClassHandler::__construct
      * @dataProvider provideFqnArray
      */
-    public function testInitialize(string $fqn): void
+    public function testInitialize(string $fqn, string $classDoc, string $classFilePath): void
     {
         $handler = new DataClassHandler($fqn);
 
-        self::assertInstanceOf(DataClassHandler::class, $handler);
+        self::assertEquals($classFilePath, $handler->getFile()->getPath());
+        self::assertNotEmpty($classDoc);
     }
 
     /**
@@ -158,6 +157,7 @@ class DataClassHandlerTest extends SapphireTest
                     ' * @property int  $TeamID Team ID',
                     ' */',
                 ]),
+                (string) realpath(implode(DIRECTORY_SEPARATOR, [__DIR__, '..', 'Player.php'])),
             ],
             [
                 'CSoellinger\SilverStripe\ModelAnnotations\Test\Unit\Supporter',
@@ -169,6 +169,7 @@ class DataClassHandlerTest extends SapphireTest
                     ' *',
                     ' */',
                 ]),
+                (string) realpath(implode(DIRECTORY_SEPARATOR, [__DIR__, '..', 'Supporter.php'])),
             ],
             [
                 'CSoellinger\SilverStripe\ModelAnnotations\Test\Unit\Team',
@@ -182,6 +183,7 @@ class DataClassHandlerTest extends SapphireTest
                     ' * @method \SilverStripe\ORM\ManyManyList Images()     Many many Images {@see Image}',
                     ' */',
                 ]),
+                (string) realpath(implode(DIRECTORY_SEPARATOR, [__DIR__, '..', 'Team.php'])),
             ],
             [
                 'CSoellinger\SilverStripe\ModelAnnotations\Test\Unit\TeamSupporter',
@@ -195,6 +197,7 @@ class DataClassHandlerTest extends SapphireTest
                     ' * @property int  $SupporterID Supporter ID',
                     ' */',
                 ]),
+                (string) realpath(implode(DIRECTORY_SEPARATOR, [__DIR__, '..', 'TeamSupporter.php'])),
             ],
         ];
     }

@@ -15,8 +15,6 @@ use SilverStripe\ORM\DataObject;
  */
 class UtilTest extends SapphireTest
 {
-    protected $usesDatabase = false;
-
     protected static Util $util;
 
     public static function setUpBeforeClass(): void
@@ -27,15 +25,6 @@ class UtilTest extends SapphireTest
         $util = Injector::inst()->get(Util::class);
 
         self::$util = $util;
-    }
-
-    /**
-     * @covers \CSoellinger\SilverStripe\ModelAnnotations\Util\Util::strStartsWith
-     */
-    public function testStrStartsWith(): void
-    {
-        self::assertTrue(self::$util->strStartsWith('Hallo', 'Ha'));
-        self::assertFalse(self::$util->strStartsWith('Hallo', 'Ol'));
     }
 
     /**

@@ -19,14 +19,7 @@ use SilverStripe\ORM\DataObject;
  */
 class DataClassFileHandlerTest extends SapphireTest
 {
-    protected $usesDatabase = false;
-
     protected static DataClassFileHandler $fileHandler;
-
-    // public static function setUpBeforeClass(): void
-    // {
-    //     parent::setUpBeforeClass();
-    // }
 
     protected function setUp(): void
     {
@@ -44,6 +37,7 @@ class DataClassFileHandlerTest extends SapphireTest
     public function testInitialize(): void
     {
         $fileHandler = new DataClassFileHandler(__FILE__);
+
         self::assertInstanceOf(DataClassFileHandler::class, $fileHandler);
     }
 
@@ -55,7 +49,7 @@ class DataClassFileHandlerTest extends SapphireTest
     public function testInitializeWrongPath(): void
     {
         $this->expectException(Exception::class);
-        $this->expectExceptionMessage('Found no file at path "/no-file-exists-here.php"');
+        $this->expectExceptionMessage('Error with file at path "/no-file-exists-here.php"');
 
         new DataClassFileHandler('/no-file-exists-here.php');
     }

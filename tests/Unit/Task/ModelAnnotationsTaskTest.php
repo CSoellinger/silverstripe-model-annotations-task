@@ -12,8 +12,10 @@ use CSoellinger\SilverStripe\ModelAnnotations\Util\Util;
 use Monolog\Logger;
 use Psr\Log\LoggerInterface;
 use SilverStripe\Control\HTTPRequest;
+use SilverStripe\Core\Config\Config;
 use SilverStripe\Core\Injector\Injector;
 use SilverStripe\Core\Kernel;
+use SilverStripe\Dev\CLI;
 use SilverStripe\Dev\SapphireTest;
 
 /**
@@ -23,8 +25,6 @@ use SilverStripe\Dev\SapphireTest;
  */
 class ModelAnnotationsTaskTest extends SapphireTest
 {
-    protected $usesDatabase = false;
-
     protected static ModelAnnotationsTask $task;
 
     public static function setUpBeforeClass(): void
@@ -43,13 +43,14 @@ class ModelAnnotationsTaskTest extends SapphireTest
 
         /** @var ModelAnnotationsTask $task */
         $task = Injector::inst()->create(ModelAnnotationsTask::class);
-
         self::$task = $task;
-        self::$task->config()->set('createBackupFile', false);
-        self::$task->config()->set('dryRun', false);
-        self::$task->config()->set('quiet', false);
-        self::$task->config()->set('addUseStatements', false);
-        self::$task->config()->set('ignoreFields', [
+
+        $config = Config::forClass(ModelAnnotationsTask::class);
+        $config->set('createBackupFile', false);
+        $config->set('dryRun', false);
+        $config->set('quiet', false);
+        $config->set('addUseStatements', false);
+        $config->set('ignoreFields', [
             'LinkTracking',
             'FileTracking',
         ]);
@@ -153,17 +154,25 @@ class ModelAnnotationsTaskTest extends SapphireTest
         $kernel = Injector::inst()->get(Kernel::class);
         $kernel->setEnvironment('live');
 
-        $output = [
-            'ERROR [Alert]: You can run this task only inside a dev environment. Your environment is: live',
-            'IN GET /dev/tasks/ModelAnnotationsTask',
-            'Line 0 in ' . realpath(
-                implode(DIRECTORY_SEPARATOR, [__DIR__, '..', '..', '..', 'src', 'Task', 'ModelAnnotationsTask.php'])
-            ),
-            '',
-            '',
-        ];
+        $taskPath = realpath(implode(DIRECTORY_SEPARATOR, [
+            __DIR__,
+            '..',
+            '..',
+            '..',
+            'src',
+            'Task',
+            'ModelAnnotationsTask.php',
+        ]));
+        $output = CLI::text(
+            'ERROR [Alert]: You can run this task only inside a dev environment. Your environment is: live' . PHP_EOL
+                . 'IN GET /dev/tasks/ModelAnnotationsTask' . PHP_EOL,
+            'red',
+            null,
+            true
+        );
+        $output .= CLI::text('Line 0 in ' . $taskPath . PHP_EOL . PHP_EOL, 'red');
 
-        $this->expectOutputString(implode(PHP_EOL, $output));
+        $this->expectOutputString($output);
         $this->expectError();
 
         $request = $this->getRequest('CSoellinger\SilverStripe\ModelAnnotations\Test\Unit\Player');
@@ -188,7 +197,8 @@ class ModelAnnotationsTaskTest extends SapphireTest
         $this->expectOutputString('');
         $this->expectError();
 
-        self::$task->config()->set('quiet', true);
+        $config = Config::forClass(ModelAnnotationsTask::class);
+        $config->set('quiet', true);
 
         $request = $this->getRequest('CSoellinger\SilverStripe\ModelAnnotations\Test\Unit\Player');
         self::$task->setRequest($request);
@@ -207,17 +217,25 @@ class ModelAnnotationsTaskTest extends SapphireTest
     {
         PhpUnitHelper::$phpSapiName = 'apache';
 
-        $output = [
-            'ERROR [Alert]: Inside browser only admins are allowed to run this task.',
-            'IN GET /dev/tasks/ModelAnnotationsTask',
-            'Line 0 in ' . realpath(
-                implode(DIRECTORY_SEPARATOR, [__DIR__, '..', '..', '..', 'src', 'Task', 'ModelAnnotationsTask.php'])
-            ),
-            '',
-            '',
-        ];
+        $taskPath = realpath(implode(DIRECTORY_SEPARATOR, [
+            __DIR__,
+            '..',
+            '..',
+            '..',
+            'src',
+            'Task',
+            'ModelAnnotationsTask.php',
+        ]));
+        $output = CLI::text(
+            'ERROR [Alert]: Inside browser only admins are allowed to run this task.' . PHP_EOL
+                . 'IN GET /dev/tasks/ModelAnnotationsTask' . PHP_EOL,
+            'red',
+            null,
+            true
+        );
+        $output .= CLI::text('Line 0 in ' . $taskPath . PHP_EOL . PHP_EOL, 'red');
 
-        $this->expectOutputString(implode(PHP_EOL, $output));
+        $this->expectOutputString($output);
         $this->expectError();
 
         $request = $this->getRequest('CSoellinger\SilverStripe\ModelAnnotations\Test\Unit\Player');
@@ -249,7 +267,9 @@ class ModelAnnotationsTaskTest extends SapphireTest
         $expected = $this->provideFqnArray()[2][2];
 
         $this->expectOutputString($expected);
-        self::$task->config()->set('addUseStatements', true);
+
+        $config = Config::forClass(ModelAnnotationsTask::class);
+        $config->set('addUseStatements', true);
 
         $request = $this->getRequest($fqn);
         self::$task->setRequest($request);
@@ -269,14 +289,27 @@ class ModelAnnotationsTaskTest extends SapphireTest
             '----------------------------------------------------------------------------------------------------',
             '',
             '',
-            'ERROR [Alert]: Data class "\not\existing\class" does not exist',
-            'IN GET /dev/tasks/ModelAnnotationsTask',
-            'Line 0 in ' . realpath(
-                implode(DIRECTORY_SEPARATOR, [__DIR__, '..', '..', '..', 'src', 'Task', 'ModelAnnotationsTask.php'])
-            ),
-            '',
             '',
         ]);
+
+        $taskPath = realpath(implode(DIRECTORY_SEPARATOR, [
+            __DIR__,
+            '..',
+            '..',
+            '..',
+            'src',
+            'Task',
+            'ModelAnnotationsTask.php',
+        ]));
+        $output .= CLI::text(
+            'ERROR [Alert]: Data class "\not\existing\class" does not exist' . PHP_EOL
+                . 'IN GET /dev/tasks/ModelAnnotationsTask' . PHP_EOL,
+            'red',
+            null,
+            true
+        );
+        $output .= CLI::text('Line 0 in ' . $taskPath . PHP_EOL . PHP_EOL, 'red');
+
         $this->expectError();
         $this->expectOutputString($output);
 
@@ -557,7 +590,7 @@ class ModelAnnotationsTaskTest extends SapphireTest
     ): HTTPRequest {
         $opts = ['dryRun' => $dryRun];
 
-        if ($dataClass) {
+        if ($dataClass !== null) {
             $opts['dataClass'] = $dataClass;
         }
 
