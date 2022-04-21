@@ -1,6 +1,10 @@
 # SilverStripe Model Annotations Task
 
-This module adds a dev task which generates annotations for your data object models. The problem is if you are working a lot with silver stripe models you will learn that no IDE can handle the DB fields as properties and/or collections as methods.
+[![Build Status](https://app.travis-ci.com/CSoellinger/silverstripe-model-annotations-task.svg?branch=main)](https://app.travis-ci.com/CSoellinger/silverstripe-model-annotations-task)
+[![codecov](https://codecov.io/gh/CSoellinger/silverstripe-model-annotations-task/branch/main/graph/badge.svg?token=8G772KZO38)](https://codecov.io/gh/CSoellinger/silverstripe-model-annotations-task)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/CSoellinger/silverstripe-model-annotations-task/badges/quality-score.png?b=main)](https://scrutinizer-ci.com/g/CSoellinger/silverstripe-model-annotations-task/?branch=main)
+
+This module adds a dev task which generates annotations for your data object models. The problem is if you are working a lot with silver stripe models you will learn that no IDE can handle the DB fields as properties and/or collections as methods. So i made this task which completes my models with annotations from existing configs of the model itself and all extensions of it. Configs handled: db, has_one, has_many, many_many, many_many(through), belongs_to, belongs_many_many.
 
 1. [Requirements](#requirements)
 2. [Installation](#installation)
@@ -9,6 +13,10 @@ This module adds a dev task which generates annotations for your data object mod
    2. [Terminal](#terminal)
    3. [Optional params](#optional-params)
 4. [Options](#options)
+   1. [dryRun (default: true)](#dryrun-default-true)
+   2. [quiet (default: false)](#quiet-default-false)
+   3. [createBackupFile (default: false)](#createbackupfile-default-false)
+   4. [addUseStatements (default: false)](#addusestatements-default-false)
 5. [Example](#example)
 6. [Documentation](#documentation)
 7. [License](#license)
@@ -18,8 +26,9 @@ This module adds a dev task which generates annotations for your data object mod
 
 ## Requirements
 
-* PHP 7.3 - PHP 8.0
+* PHP 7.4 - PHP 8.0
 * PHP-AST extension
+* PHP-BCMATH extension
 * SilverStripe ^4.10
 
 ## Installation
