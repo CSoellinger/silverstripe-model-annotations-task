@@ -33,7 +33,12 @@
     "require": {
         "php": ">=7.4,<8.1",
         "ext-ast": "*",
-        "azjezz/psl": "1.6",
+        "ext-bcmath": "*",
+        "ext-intl": "*",
+        "ext-json": "*",
+        "ext-mbstring": "*",
+        "ext-sodium": "*",
+        "azjezz/psl": "^1.6",
         "silverstripe/framework": "~4.10"
     },
     "require-dev": {
@@ -75,7 +80,8 @@
             "ramsey/devtools": true,
             "silverstripe/vendor-plugin": true,
             "composer/package-versions-deprecated": true,
-            "silverstripe/recipe-plugin": true
+            "silverstripe/recipe-plugin": true,
+            "silverstripe/moduleratings-plugin": true
         },
         "sort-packages": true
     },
