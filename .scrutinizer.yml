@@ -1,6 +1,9 @@
 inherit: true
 
 build:
+  dependencies:
+    override:
+      - composer install --prefer-dist
   nodes:
     analysis:
       environment:
@@ -9,6 +12,9 @@ build:
             - ast
       tests:
         override: [php-scrutinizer-run]
+
+tools:
+    external_code_coverage: true
 
 checks:
   php:
