@@ -4,13 +4,12 @@ namespace CSoellinger\SilverStripe\ModelAnnotations\Test\Unit\Handler;
 
 use CSoellinger\SilverStripe\ModelAnnotations\Handler\DataClassFileHandler;
 use CSoellinger\SilverStripe\ModelAnnotations\Task\ModelAnnotationsTask;
-use CSoellinger\SilverStripe\ModelAnnotations\Util\Util;
-use Exception;
-use Reflection;
+use InvalidArgumentException;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Core\Injector\Injector;
 use SilverStripe\Dev\SapphireTest;
-use SilverStripe\ORM\DataObject;
+
+define('PHP_OPEN', '<?php');
 
 /**
  * @internal
@@ -36,19 +35,20 @@ class DataClassFileHandlerTest extends SapphireTest
      */
     public function testInitialize(): void
     {
-        $fileHandler = new DataClassFileHandler(__FILE__);
+        $fileHandlerInstance = new DataClassFileHandler(__FILE__);
 
-        self::assertInstanceOf(DataClassFileHandler::class, $fileHandler);
+        self::assertInstanceOf(DataClassFileHandler::class, $fileHandlerInstance);
     }
 
     /**
      * @covers \CSoellinger\SilverStripe\ModelAnnotations\Handler\DataClassFileHandler::__construct
-     * @throws Exception
+     *
+     * @throws InvalidArgumentException
      * @group ExpectedOutput
      */
     public function testInitializeWrongPath(): void
     {
-        $this->expectException(Exception::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Error with file at path "/no-file-exists-here.php"');
 
         new DataClassFileHandler('/no-file-exists-here.php');
@@ -99,10 +99,10 @@ class DataClassFileHandlerTest extends SapphireTest
             '_config.php',
         ]);
 
-        /** @var DataClassFileHandler $fileHandler */
-        $fileHandler = Injector::inst()->createWithArgs(DataClassFileHandler::class, [$filePath]);
+        /** @var DataClassFileHandler $fileHandlerInstance */
+        $fileHandlerInstance = Injector::inst()->createWithArgs(DataClassFileHandler::class, [$filePath]);
 
-        self::$fileHandler = $fileHandler;
+        self::$fileHandler = $fileHandlerInstance;
 
         self::assertNull(self::$fileHandler->getNamespaceAst());
     }
@@ -112,7 +112,7 @@ class DataClassFileHandlerTest extends SapphireTest
      */
     public function testGetClassAst(): void
     {
-        self::assertEquals(\ast\parse_file(__FILE__, 80)->children[10], self::$fileHandler->getClassAst(self::class));
+        self::assertEquals(\ast\parse_file(__FILE__, 80)->children[8], self::$fileHandler->getClassAst(self::class));
     }
 
     /**
@@ -127,9 +127,6 @@ class DataClassFileHandlerTest extends SapphireTest
             \ast\parse_file(__FILE__, 80)->children[4]->children[0],
             \ast\parse_file(__FILE__, 80)->children[5]->children[0],
             \ast\parse_file(__FILE__, 80)->children[6]->children[0],
-            \ast\parse_file(__FILE__, 80)->children[7]->children[0],
-            \ast\parse_file(__FILE__, 80)->children[8]->children[0],
-            \ast\parse_file(__FILE__, 80)->children[9]->children[0],
         ];
 
         self::assertEquals($useStatements, self::$fileHandler->getUseStatementsFromAst());
@@ -141,8 +138,8 @@ class DataClassFileHandlerTest extends SapphireTest
     public function testAddText(): void
     {
         $newContent = str_replace(
-            '<?php' . PHP_EOL,
-            '<?php' . PHP_EOL . '\/** TEST *\/' . PHP_EOL,
+            PHP_OPEN . PHP_EOL,
+            PHP_OPEN . PHP_EOL . '\/** TEST *\/' . PHP_EOL,
             (string) file_get_contents(__FILE__)
         );
 
@@ -157,8 +154,8 @@ class DataClassFileHandlerTest extends SapphireTest
     public function testAddTextAtLineZero(): void
     {
         $newContent = str_replace(
-            '<?php' . PHP_EOL,
-            '<!-- TEST -->' . PHP_EOL . '<?php' . PHP_EOL,
+            PHP_OPEN . PHP_EOL,
+            '<!-- TEST -->' . PHP_EOL . PHP_OPEN . PHP_EOL,
             (string) file_get_contents(__FILE__)
         );
 
@@ -173,12 +170,12 @@ class DataClassFileHandlerTest extends SapphireTest
     public function testContentReplace(): void
     {
         $newContent = str_replace(
-            '<?php' . PHP_EOL,
-            '<?php \/** TEST *\/' . PHP_EOL,
+            PHP_OPEN . PHP_EOL,
+            PHP_OPEN . ' \/** TEST *\/' . PHP_EOL,
             (string) file_get_contents(__FILE__)
         );
 
-        self::$fileHandler->contentReplace('<?php' . PHP_EOL, '<?php \/** TEST *\/' . PHP_EOL);
+        self::$fileHandler->contentReplace(PHP_OPEN . PHP_EOL, PHP_OPEN . ' \/** TEST *\/' . PHP_EOL);
 
         self::assertEquals($newContent, self::$fileHandler->getContent());
     }

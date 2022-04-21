@@ -5,6 +5,10 @@ namespace CSoellinger\SilverStripe\ModelAnnotations\Test\Unit\Handler;
 use CSoellinger\SilverStripe\ModelAnnotations\Handler\DataClassFileHandler;
 use CSoellinger\SilverStripe\ModelAnnotations\Handler\DataClassHandler;
 use CSoellinger\SilverStripe\ModelAnnotations\Task\ModelAnnotationsTask;
+use CSoellinger\SilverStripe\ModelAnnotations\Test\Unit\Player;
+use CSoellinger\SilverStripe\ModelAnnotations\Test\Unit\Supporter;
+use CSoellinger\SilverStripe\ModelAnnotations\Test\Unit\Team;
+use CSoellinger\SilverStripe\ModelAnnotations\Test\Unit\TeamSupporter;
 use CSoellinger\SilverStripe\ModelAnnotations\View\DataClassTaskView;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Core\Injector\Injector;
@@ -23,12 +27,12 @@ class DataClassHandlerTest extends SapphireTest
     {
         parent::setUp();
 
-        /** @var DataClassHandler $handler */
-        $handler = Injector::inst()
-            ->createWithArgs(DataClassHandler::class, ['CSoellinger\SilverStripe\ModelAnnotations\Test\Unit\Team'])
+        /** @var DataClassHandler $handlerInstance */
+        $handlerInstance = Injector::inst()
+            ->createWithArgs(DataClassHandler::class, [Team::class])
         ;
 
-        self::$handler = $handler;
+        self::$handler = $handlerInstance;
     }
 
     /**
@@ -37,9 +41,9 @@ class DataClassHandlerTest extends SapphireTest
      */
     public function testInitialize(string $fqn, string $classDoc, string $classFilePath): void
     {
-        $handler = new DataClassHandler($fqn);
+        $handlerInstance = new DataClassHandler($fqn);
 
-        self::assertEquals($classFilePath, $handler->getFile()->getPath());
+        self::assertEquals($classFilePath, $handlerInstance->getFile()->getPath());
         self::assertNotEmpty($classDoc);
     }
 
@@ -54,12 +58,12 @@ class DataClassHandlerTest extends SapphireTest
 
         Config::forClass(ModelAnnotationsTask::class)->set('addUseStatements', true);
 
-        /** @var DataClassHandler $handler */
-        $handler = Injector::inst()
+        /** @var DataClassHandler $handlerInstance */
+        $handlerInstance = Injector::inst()
             ->createWithArgs(DataClassHandler::class, ['CSoellinger\SilverStripe\ModelAnnotations\Test\Unit\Team'])
         ;
 
-        self::$handler = $handler;
+        self::$handler = $handlerInstance;
 
         $missingUseStatements = self::$handler->getMissingUseStatements();
 
@@ -132,9 +136,9 @@ class DataClassHandlerTest extends SapphireTest
      */
     public function testGenerateClassPhpDoc(string $fqn, string $classDoc): void
     {
-        /** @var DataClassHandler $handler */
-        $handler = Injector::inst()->createWithArgs(DataClassHandler::class, [$fqn]);
-        self::$handler = $handler;
+        /** @var DataClassHandler $handlerInstance */
+        $handlerInstance = Injector::inst()->createWithArgs(DataClassHandler::class, [$fqn]);
+        self::$handler = $handlerInstance;
 
         self::assertEquals($classDoc, self::$handler->generateClassPhpDoc());
     }
@@ -146,7 +150,7 @@ class DataClassHandlerTest extends SapphireTest
     {
         return [
             [
-                'CSoellinger\SilverStripe\ModelAnnotations\Test\Unit\Player',
+                Player::class,
                 implode(PHP_EOL, [
                     '/**',
                     ' * @internal Testing model',
@@ -160,7 +164,7 @@ class DataClassHandlerTest extends SapphireTest
                 (string) realpath(implode(DIRECTORY_SEPARATOR, [__DIR__, '..', 'Player.php'])),
             ],
             [
-                'CSoellinger\SilverStripe\ModelAnnotations\Test\Unit\Supporter',
+                Supporter::class,
                 implode(PHP_EOL, [
                     '/**',
                     ' * @internal Testing model',
@@ -172,7 +176,7 @@ class DataClassHandlerTest extends SapphireTest
                 (string) realpath(implode(DIRECTORY_SEPARATOR, [__DIR__, '..', 'Supporter.php'])),
             ],
             [
-                'CSoellinger\SilverStripe\ModelAnnotations\Test\Unit\Team',
+                Team::class,
                 implode(PHP_EOL, [
                     '/**',
                     ' * @property string $Name   Name ...',
@@ -186,7 +190,7 @@ class DataClassHandlerTest extends SapphireTest
                 (string) realpath(implode(DIRECTORY_SEPARATOR, [__DIR__, '..', 'Team.php'])),
             ],
             [
-                'CSoellinger\SilverStripe\ModelAnnotations\Test\Unit\TeamSupporter',
+                TeamSupporter::class,
                 implode(PHP_EOL, [
                     '/**',
                     ' * @property int       $Ranking     Ranking ...',

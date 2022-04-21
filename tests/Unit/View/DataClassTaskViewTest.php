@@ -15,6 +15,8 @@ use SilverStripe\Core\Injector\Injector;
 use SilverStripe\Dev\SapphireTest;
 use SilverStripe\ORM\DataObject;
 
+define('TEST_MESSAGE', 'Test Message');
+
 /**
  * @internal
  *
@@ -80,11 +82,11 @@ class DataClassTaskViewTest extends SapphireTest
      */
     public function testRenderMessage(): void
     {
-        $output = 'Test Message' . PHP_EOL . PHP_EOL;
+        $output = TEST_MESSAGE . PHP_EOL . PHP_EOL;
 
         $this->expectOutputString($output);
 
-        self::$view->renderMessage('Test Message');
+        self::$view->renderMessage(TEST_MESSAGE);
     }
 
     /**
@@ -97,13 +99,13 @@ class DataClassTaskViewTest extends SapphireTest
 
         $output = '<div class="build" style="padding-bottom: 0;">';
         $output .= '  <div class="success" style="font-weight: 600;">';
-        $output .= 'Test Message';
+        $output .= TEST_MESSAGE;
         $output .= '  </div>';
         $output .= '</div>';
 
         $this->expectOutputString($output);
 
-        self::$view->renderMessage('Test Message');
+        self::$view->renderMessage(TEST_MESSAGE);
     }
 
     /**

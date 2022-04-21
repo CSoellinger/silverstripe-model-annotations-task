@@ -8,6 +8,10 @@ require_once __DIR__ . '/../../mockup.php';
 
 use CSoellinger\SilverStripe\ModelAnnotations\Task\ModelAnnotationsTask;
 use CSoellinger\SilverStripe\ModelAnnotations\Test\PhpUnitHelper;
+use CSoellinger\SilverStripe\ModelAnnotations\Test\Unit\Player;
+use CSoellinger\SilverStripe\ModelAnnotations\Test\Unit\Supporter;
+use CSoellinger\SilverStripe\ModelAnnotations\Test\Unit\Team;
+use CSoellinger\SilverStripe\ModelAnnotations\Test\Unit\TeamSupporter;
 use CSoellinger\SilverStripe\ModelAnnotations\Util\Util;
 use Monolog\Logger;
 use Psr\Log\LoggerInterface;
@@ -17,6 +21,19 @@ use SilverStripe\Core\Injector\Injector;
 use SilverStripe\Core\Kernel;
 use SilverStripe\Dev\CLI;
 use SilverStripe\Dev\SapphireTest;
+
+define('TASK_PATH', realpath(implode(DIRECTORY_SEPARATOR, [
+    __DIR__,
+    '..',
+    '..',
+    '..',
+    'src',
+    'Task',
+    'ModelAnnotationsTask.php',
+])));
+
+define('ERROR_URL', 'IN GET /dev/tasks/ModelAnnotationsTask');
+define('ERROR_LINE', 'Line 0 in ');
 
 /**
  * @internal
@@ -153,29 +170,19 @@ class ModelAnnotationsTaskTest extends SapphireTest
         /** @var Kernel $kernel */
         $kernel = Injector::inst()->get(Kernel::class);
         $kernel->setEnvironment('live');
-
-        $taskPath = realpath(implode(DIRECTORY_SEPARATOR, [
-            __DIR__,
-            '..',
-            '..',
-            '..',
-            'src',
-            'Task',
-            'ModelAnnotationsTask.php',
-        ]));
         $output = CLI::text(
             'ERROR [Alert]: You can run this task only inside a dev environment. Your environment is: live' . PHP_EOL
-                . 'IN GET /dev/tasks/ModelAnnotationsTask' . PHP_EOL,
+                . ERROR_URL . PHP_EOL,
             'red',
             null,
             true
         );
-        $output .= CLI::text('Line 0 in ' . $taskPath . PHP_EOL . PHP_EOL, 'red');
+        $output .= CLI::text(ERROR_LINE . TASK_PATH . PHP_EOL . PHP_EOL, 'red');
 
         $this->expectOutputString($output);
         $this->expectError();
 
-        $request = $this->getRequest('CSoellinger\SilverStripe\ModelAnnotations\Test\Unit\Player');
+        $request = $this->getRequest(Player::class);
         self::$task->setRequest($request);
         self::$task->run($request);
 
@@ -200,7 +207,7 @@ class ModelAnnotationsTaskTest extends SapphireTest
         $config = Config::forClass(ModelAnnotationsTask::class);
         $config->set('quiet', true);
 
-        $request = $this->getRequest('CSoellinger\SilverStripe\ModelAnnotations\Test\Unit\Player');
+        $request = $this->getRequest(Player::class);
         self::$task->setRequest($request);
         self::$task->run($request);
 
@@ -217,28 +224,19 @@ class ModelAnnotationsTaskTest extends SapphireTest
     {
         PhpUnitHelper::$phpSapiName = 'apache';
 
-        $taskPath = realpath(implode(DIRECTORY_SEPARATOR, [
-            __DIR__,
-            '..',
-            '..',
-            '..',
-            'src',
-            'Task',
-            'ModelAnnotationsTask.php',
-        ]));
         $output = CLI::text(
             'ERROR [Alert]: Inside browser only admins are allowed to run this task.' . PHP_EOL
-                . 'IN GET /dev/tasks/ModelAnnotationsTask' . PHP_EOL,
+                . ERROR_URL . PHP_EOL,
             'red',
             null,
             true
         );
-        $output .= CLI::text('Line 0 in ' . $taskPath . PHP_EOL . PHP_EOL, 'red');
+        $output .= CLI::text(ERROR_LINE . TASK_PATH . PHP_EOL . PHP_EOL, 'red');
 
         $this->expectOutputString($output);
         $this->expectError();
 
-        $request = $this->getRequest('CSoellinger\SilverStripe\ModelAnnotations\Test\Unit\Player');
+        $request = $this->getRequest(Player::class);
         self::$task->setRequest($request);
         self::$task->run($request);
     }
@@ -292,23 +290,14 @@ class ModelAnnotationsTaskTest extends SapphireTest
             '',
         ]);
 
-        $taskPath = realpath(implode(DIRECTORY_SEPARATOR, [
-            __DIR__,
-            '..',
-            '..',
-            '..',
-            'src',
-            'Task',
-            'ModelAnnotationsTask.php',
-        ]));
         $output .= CLI::text(
             'ERROR [Alert]: Data class "\not\existing\class" does not exist' . PHP_EOL
-                . 'IN GET /dev/tasks/ModelAnnotationsTask' . PHP_EOL,
+                . ERROR_URL . PHP_EOL,
             'red',
             null,
             true
         );
-        $output .= CLI::text('Line 0 in ' . $taskPath . PHP_EOL . PHP_EOL, 'red');
+        $output .= CLI::text(ERROR_LINE . TASK_PATH . PHP_EOL . PHP_EOL, 'red');
 
         $this->expectError();
         $this->expectOutputString($output);
@@ -376,16 +365,16 @@ class ModelAnnotationsTaskTest extends SapphireTest
     {
         return [
             [
-                'CSoellinger\SilverStripe\ModelAnnotations\Test\Unit\Player',
+                Player::class,
                 implode(PHP_EOL, [
                     'PARAMS',
-                    '| dataClass: CSoellinger\SilverStripe\ModelAnnotations\Test\Unit\Player | dryRun: true |',
+                    '| dataClass: ' . Player::class . ' | dryRun: true |',
                     'addUseStatements: false | createBackupFile: false | quiet: false |',
                     '--------------------------------------------------------------------------------------------' .
                         '--------',
                     '',
                     '',
-                    'CSoellinger\SilverStripe\ModelAnnotations\Test\Unit\Player',
+                    Player::class,
                     'File: ' .
                     realpath(implode(DIRECTORY_SEPARATOR, [__DIR__, '..', 'Player.php'])),
                     '',
@@ -413,16 +402,16 @@ class ModelAnnotationsTaskTest extends SapphireTest
                 ]),
             ],
             [
-                'CSoellinger\SilverStripe\ModelAnnotations\Test\Unit\Supporter',
+                Supporter::class,
                 implode(PHP_EOL, [
                     'PARAMS',
-                    '| dataClass: CSoellinger\SilverStripe\ModelAnnotations\Test\Unit\Supporter | dryRun: true |',
+                    '| dataClass: ' . Supporter::class . ' | dryRun: true |',
                     'addUseStatements: false | createBackupFile: false | quiet: false |',
                     '--------------------------------------------------------------------------------------------' .
                         '--------',
                     '',
                     '',
-                    'CSoellinger\SilverStripe\ModelAnnotations\Test\Unit\Supporter',
+                    Supporter::class,
                     'File: ' .
                     realpath(implode(DIRECTORY_SEPARATOR, [__DIR__, '..', 'Supporter.php'])),
                     '',
@@ -448,16 +437,16 @@ class ModelAnnotationsTaskTest extends SapphireTest
                 ]),
             ],
             [
-                'CSoellinger\SilverStripe\ModelAnnotations\Test\Unit\Team',
+                Team::class,
                 implode(PHP_EOL, [
                     'PARAMS',
-                    '| dataClass: CSoellinger\SilverStripe\ModelAnnotations\Test\Unit\Team | dryRun: true |',
+                    '| dataClass: ' . Team::class . ' | dryRun: true |',
                     'addUseStatements: false | createBackupFile: false | quiet: false |',
                     '----------------------------------------------------------------------------------------------' .
                         '------',
                     '',
                     '',
-                    'CSoellinger\SilverStripe\ModelAnnotations\Test\Unit\Team',
+                    Team::class,
                     'File: ' .
                     realpath(implode(DIRECTORY_SEPARATOR, [__DIR__, '..', 'Team.php'])),
                     '',
@@ -486,13 +475,13 @@ class ModelAnnotationsTaskTest extends SapphireTest
                 ]),
                 implode(PHP_EOL, [
                     'PARAMS',
-                    '| dataClass: CSoellinger\SilverStripe\ModelAnnotations\Test\Unit\Team | dryRun: true |',
+                    '| dataClass: ' . Team::class . ' | dryRun: true |',
                     'addUseStatements: true | createBackupFile: false | quiet: false |',
                     '-----------------------------------------------------------------------------------------------' .
                         '-----',
                     '',
                     '',
-                    'CSoellinger\SilverStripe\ModelAnnotations\Test\Unit\Team',
+                    Team::class,
                     'File: ' .
                     realpath(implode(DIRECTORY_SEPARATOR, [__DIR__, '..', 'Team.php'])),
                     '',
@@ -543,16 +532,16 @@ class ModelAnnotationsTaskTest extends SapphireTest
                 ]),
             ],
             [
-                'CSoellinger\SilverStripe\ModelAnnotations\Test\Unit\TeamSupporter',
+                TeamSupporter::class,
                 implode(PHP_EOL, [
                     'PARAMS',
-                    '| dataClass: CSoellinger\SilverStripe\ModelAnnotations\Test\Unit\TeamSupporter | dryRun: true |',
+                    '| dataClass: ' . TeamSupporter::class . ' | dryRun: true |',
                     'addUseStatements: false | createBackupFile: false | quiet: false |',
                     '-----------------------------------------------------------------------------------------------'.
                         '-----',
                     '',
                     '',
-                    'CSoellinger\SilverStripe\ModelAnnotations\Test\Unit\TeamSupporter',
+                    TeamSupporter::class,
                     'File: ' .
                     realpath(implode(DIRECTORY_SEPARATOR, [__DIR__, '..', 'TeamSupporter.php'])),
                     '',

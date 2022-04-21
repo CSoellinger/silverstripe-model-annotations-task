@@ -177,7 +177,7 @@ class DataClassHandler
      */
     public function generateClassPhpDoc(): string
     {
-        // Get space paddings (TODO: maybe we find a better way, this looks hacky)
+        // Get space paddings
         $spacePad = ['dataType' => 0, 'variableName' => 0, 'methodName' => 0, 'methodType' => 0];
         foreach ($this->modelProperties as $modelProperty) {
             if (strlen($modelProperty['dataType']) > $spacePad['dataType']) {
@@ -309,11 +309,14 @@ class DataClassHandler
 
     private function fetchModelMethods(bool $filterExistingAnnotations = true): void
     {
+        $hasManyList = 'SilverStripe\ORM\HasManyList';
+        $manyManyList = 'SilverStripe\ORM\ManyManyList';
+
         // List relations
         $relations = [
-            'has_many' => ['list' => 'SilverStripe\ORM\HasManyList'],
-            'many_many' => ['list' => 'SilverStripe\ORM\ManyManyList'],
-            'belongs_many_many' => ['list' => 'SilverStripe\ORM\ManyManyList'],
+            'has_many' => ['list' => $hasManyList],
+            'many_many' => ['list' => $manyManyList],
+            'belongs_many_many' => ['list' => $manyManyList],
         ];
 
         foreach ($relations as $key => $relation) {
@@ -327,7 +330,7 @@ class DataClassHandler
 
                 if (is_array($fieldType) === true) {
                     $fieldType = $fieldType['through'];
-                    $relation['list'] = 'SilverStripe\ORM\ManyManyList';
+                    $relation['list'] = $manyManyList;
                 }
 
                 $fieldType = $this->shortenDataType($fieldType);

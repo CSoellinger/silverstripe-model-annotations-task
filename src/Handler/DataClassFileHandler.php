@@ -4,6 +4,7 @@ namespace CSoellinger\SilverStripe\ModelAnnotations\Handler;
 
 use CSoellinger\SilverStripe\ModelAnnotations\Task\ModelAnnotationsTask;
 use Exception;
+use InvalidArgumentException;
 use SilverStripe\Core\ClassInfo;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Core\Injector\Injectable;
@@ -39,7 +40,7 @@ class DataClassFileHandler
     {
         // If we did not get a valid file we are throwing an exception
         if ($path === '' || File\exists($path) === false || File\is_file($path) === false) {
-            throw new Exception('Error with file at path "' . $path . '"', 1);
+            throw new InvalidArgumentException('Error with file at path "' . $path . '"', 1);
         }
 
         $this->path = $path;
