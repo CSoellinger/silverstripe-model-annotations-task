@@ -257,10 +257,6 @@ class DataClassHandler
             $fieldConfigs = Config::forClass($this->fqn)->get($configKey);
 
             foreach ($fieldConfigs as $fieldName => $fieldType) {
-                if ($this->checkField($fieldName) === true) {
-                    continue;
-                }
-
                 if ($configKey === 'db') {
                     $fieldType = $this->util->silverStripeToPhpType(strtolower($fieldType));
                     $description = $fieldName . ' ...';
@@ -270,41 +266,62 @@ class DataClassHandler
                          . $fieldName . ' {@see ' . $fieldType . '}';
                 }
 
-                $matches = [];
-                if ($filterExistingAnnotations === true) {
-                    $regex = '/@property[\s]*' . preg_quote($fieldType, '/') . '[\s]*\\$' .
-                        preg_quote($fieldName, '/') . '[\s]*/m';
-
-                    preg_match_all($regex, $this->getClassPhpDoc(), $matches, PREG_SET_ORDER, 0);
-                }
-
-                if (count($matches) === 0) {
-                    $this->modelProperties[] = [
-                        'dataType' => $fieldType,
-                        'variableName' => $fieldName,
-                        'description' => $description,
-                    ];
-                }
+                $this->modelProperties[] = $this->getModelPropertyData(
+                    $fieldName,
+                    $fieldType,
+                    $filterExistingAnnotations,
+                    $description
+                );
 
                 // For has one relations we also add the ID field
                 if ($configKey === 'has_one') {
-                    $matches = [];
-                    if ($filterExistingAnnotations === true) {
-                        $regex = '/@property[\s]*int[\s]*\\$' . preg_quote($fieldName, '/') . 'ID[\s]*/m';
-
-                        preg_match_all($regex, $this->getClassPhpDoc(), $matches, PREG_SET_ORDER, 0);
-                    }
-
-                    if (count($matches) === 0) {
-                        $this->modelProperties[] = [
-                            'dataType' => 'int',
-                            'variableName' => $fieldName . 'ID',
-                            'description' => $fieldName . ' ID',
-                        ];
-                    }
+                    $this->modelProperties[] = $this->getModelPropertyData(
+                        $fieldName . 'ID',
+                        'int',
+                        $filterExistingAnnotations,
+                        $fieldName . ' ID'
+                    );
                 }
             }
         }
+
+        $this->modelProperties = array_filter($this->modelProperties, function ($modelProperty) {
+            return count($modelProperty) > 0;
+        });
+    }
+
+    /**
+     * Gert model property array data.
+     *
+     * @return array<string,string>
+     */
+    private function getModelPropertyData(
+        string $fieldName,
+        string $fieldType,
+        bool $filterExistingAnnotations,
+        string $description
+    ) {
+        if ($this->checkField($fieldName) === true) {
+            return [];
+        }
+
+        $matches = [];
+        if ($filterExistingAnnotations === true) {
+            $regex = '/@property[\s]*' . preg_quote($fieldType, '/') . '[\s]*\\$' .
+                preg_quote($fieldName, '/') . '[\s]*/m';
+
+            preg_match_all($regex, $this->getClassPhpDoc(), $matches, PREG_SET_ORDER, 0);
+        }
+
+        if (count($matches) > 0) {
+            return [];
+        }
+
+        return [
+            'dataType' => $fieldType,
+            'variableName' => $fieldName,
+            'description' => $description,
+        ];
     }
 
     private function fetchModelMethods(bool $filterExistingAnnotations = true): void
@@ -324,39 +341,69 @@ class DataClassHandler
             $fieldConfigs = Config::forClass($this->fqn)->get($key);
 
             foreach ($fieldConfigs as $fieldName => $fieldType) {
-                if ($this->checkField($fieldName) === true) {
-                    continue;
-                }
-
-                if (is_array($fieldType) === true) {
-                    $fieldType = $fieldType['through'];
-                    $relation['list'] = $manyManyList;
-                }
-
-                $fieldType = $this->shortenDataType($fieldType);
-                $listType = $this->shortenDataType($relation['list']);
-                $description = str_replace('_', ' ', ucfirst($key)) . ' '
-                    . $fieldName . ' {@see ' . $fieldType . '}';
-
-                if ($filterExistingAnnotations === true) {
-                    $matches = [];
-                    $regex = '/@method[\s]*' . preg_quote($listType, '/') . '[\s]*'
-                        . preg_quote($fieldName, '/') . '\(.*\)[\s]*/m';
-
-                    preg_match_all($regex, $this->getClassPhpDoc(), $matches, PREG_SET_ORDER, 0);
-
-                    if (count($matches) > 0) {
-                        continue;
-                    }
-                }
-
-                $this->modelMethods[] = [
-                    'dataType' => $listType,
-                    'variableName' => $fieldName,
-                    'description' => $description,
-                ];
+                $this->modelMethods[] = $this->getModelMethodData(
+                    $fieldName,
+                    $fieldType,
+                    $relation,
+                    $manyManyList,
+                    $key,
+                    $filterExistingAnnotations
+                );
             }
         }
+
+        $this->modelMethods = array_filter($this->modelMethods, function ($modelMethod) {
+            return count($modelMethod) > 0;
+        });
+    }
+
+    /**
+     * Get model method data array.
+     *
+     * @param array<string,string>|string $fieldType
+     * @param array<string,string>        $relation
+     *
+     * @return array<string,string>
+     */
+    private function getModelMethodData(
+        string $fieldName,
+        $fieldType,
+        $relation,
+        string $manyManyList,
+        string $relationKey,
+        bool $filterExistingAnnotations
+    ) {
+        if ($this->checkField($fieldName) === true) {
+            return [];
+        }
+
+        if (is_array($fieldType) === true) {
+            $fieldType = $fieldType['through'];
+            $relation['list'] = $manyManyList;
+        }
+
+        $fieldType = $this->shortenDataType($fieldType);
+        $listType = $this->shortenDataType($relation['list']);
+        $description = str_replace('_', ' ', ucfirst($relationKey)) . ' '
+            . $fieldName . ' {@see ' . $fieldType . '}';
+
+        if ($filterExistingAnnotations === true) {
+            $matches = [];
+            $regex = '/@method[\s]*' . preg_quote($listType, '/') . '[\s]*'
+                . preg_quote($fieldName, '/') . '\(.*\)[\s]*/m';
+
+            preg_match_all($regex, $this->getClassPhpDoc(), $matches, PREG_SET_ORDER, 0);
+
+            if (count($matches) > 0) {
+                return [];
+            }
+        }
+
+        return [
+            'dataType' => $listType,
+            'variableName' => $fieldName,
+            'description' => $description,
+        ];
     }
 
     /**
