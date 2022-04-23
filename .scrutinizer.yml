@@ -1,15 +1,15 @@
 inherit: true
 
 build:
-  dependencies:
-    override:
-      - composer install --prefer-dist
   nodes:
     analysis:
       environment:
         php:
           pecl_extensions:
             - ast
+      dependencies:
+        override:
+          - composer install --prefer-dist
       tests:
         override: [php-scrutinizer-run]
 
